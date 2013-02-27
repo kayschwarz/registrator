@@ -50,8 +50,7 @@ Response:
 
 - `✓` **Update a `knoten` (send "heartbeat")**:  
 ```sh
-$ NR=178; $MAC=f00; $PASS="secret" 
-$ NR=178; curl http://reg.js.ars.is/put/knoten/$NR/$MAC/$PASS
+$ curl http://reg.js.ars.is/time
 ```
 Response:
 ```js
@@ -64,6 +63,16 @@ Response:
     "last_seen":1361996823533
   }
 }
+```
+
+- `✓` **Get a current timestamp**:  
+```sh
+$ NR=178; $MAC=f00; $PASS="secret" 
+$ NR=178; curl http://reg.js.ars.is/put/knoten/$NR/$MAC/$PASS
+```
+Response:
+```js
+{ "now": 1362000948023 }
 ```
 
 - Auto-Register a knoten: `MAC=c0ffe3; PASS="phrase" && wget http://reg.js.ars.is/post/knoten?MAC=$MAC&PASS=$PASS`
