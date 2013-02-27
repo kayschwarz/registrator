@@ -1,29 +1,43 @@
-# Registrator
+# Weimarnetz Registrator
 
 ## Usage
 
 - This is a knoten:  
-    {
-      "number": 178,
-      "mac": "90f652c79eb0",
-      "pass": "hashed private key"
-    }
+```js
+{
+  "number": 178,
+  "mac": "90f652c79eb0",
+  "pass": "hashed private key"
+}
+```
 
 - `✓` Get all knoten:  
-  `wget http://reg.js.ars.is/knoten`
+```sh
+$ curl http://reg.js.ars.is/knoten
+```
+```js
+{
+    "status" : 200,
+    "msg" : "ok",
+    "result" : {
+    "number" : "64",
+    "mac" : "f00"
+  }
+}
+```
 
-- `✓` Check if a knoten exists:  
-  `NR=178; wget http://reg.js.ars.is/knoten/$NR`
+- `✓` Check if a knoten exists: `NR=178; wget http://reg.js.ars.is/knoten/$NR`
 
-- Auto-Register a knoten:  
-  `MAC=c0ffe3; PASS="phrase" && wget http://reg.js.ars.is/post/knoten?MAC=$MAC&PASS=$PASS`
+- Auto-Register a knoten: `MAC=c0ffe3; PASS="phrase" && wget http://reg.js.ars.is/post/knoten?MAC=$MAC&PASS=$PASS`
 
-- Update a knoten:  
-  `NR=178; MAC=c0ffe3; PASS="phrase" && wget http://reg.js.ars.is/post/knoten?NUMBER=$NR&MAC=$MAC&PASS=$PASS`
+- Update a knoten: `NR=178; MAC=c0ffe3; PASS="phrase" && wget http://reg.js.ars.is/post/knoten?NUMBER=$NR&MAC=$MAC&PASS=$PASS`
+
+
 ---
 
 **WIP:** This is a description of how the API should work. 
 (why? documentation-driven developement!)
+
 
 ## API
 
