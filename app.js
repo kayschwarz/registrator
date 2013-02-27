@@ -26,17 +26,21 @@ app.router.get('/knoten', function (number) {
     if (err) {
       // we just assume a 404
       var e = {
-        status: 404,
-        msg: "Not Found"
+        "status": 404,
+        "msg": "Not Found"
       };
       http.res.writeHead(e.status, e.msg);
       http.res.json(e);
       
     } else { // if no error
-      // build data
-      var data = Object.keys(objs);
+      // build answer
+      var a = {
+        "status": 200,
+        "msg": "ok",
+        "knoten": Object.keys(objs)
+      };
       // send it
-      http.res.json(data);
+      http.res.json(a);
     }
   });
 });
