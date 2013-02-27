@@ -45,5 +45,5 @@ app.router.get('/knoten', function (number) {
   });
 });
 
-// start http server on port 3000
-app.start(3000);
+// start http server on configured port
+app.start(app.config.get('port'));
