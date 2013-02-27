@@ -1,32 +1,51 @@
 # Weimarnetz Registrator
 
-## Usage
+> :four_leaf_clover: EARN **KNOTEN NUMBERS** JUST BY WORKING FROM HOME! :house:  
+> :rocket: LOOSE 50 PACKETS IN **JUST MILISECONDS**! :ramen:  
+>  :boom:ENLARGE YOUR **MESH NET**! :checkered_flag:  
 
-- This is a knoten:  
+
+## TL;DR
+
+- This is a `knoten`:  
 ```js
 {
   "number": 178,
   "mac": "90f652c79eb0",
-  "pass": "hashed private key"
+  "pass": "hashed private key" // never returned by API
 }
 ```
 
-- `✓` Get all knoten:  
+- `✓` **Get all `knoten` numbers**:  
 ```sh
 $ curl http://reg.js.ars.is/knoten
 ```
 ```js
 {
-    "status" : 200,
-    "msg" : "ok",
-    "result" : {
-    "number" : "64",
-    "mac" : "f00"
-  }
+  "status" : 200,
+  "msg" : "ok",
+  "result" : [
+    "64",
+    "178"
+  ]
 }
 ```
 
-- `✓` Check if a knoten exists: `NR=178; wget http://reg.js.ars.is/knoten/$NR`
+- `✓` **Check if a `knoten` exists**:  
+```sh
+$ NR=178; curl http://reg.js.ars.is/knoten/$NR
+```
+Response:
+```js
+{
+  "status" : 200,
+  "msg" : "ok",
+  "result" : {
+    "number" : "178",
+    "mac" : "90f652c79eb0"
+  }
+}
+```
 
 - Auto-Register a knoten: `MAC=c0ffe3; PASS="phrase" && wget http://reg.js.ars.is/post/knoten?MAC=$MAC&PASS=$PASS`
 
@@ -35,11 +54,13 @@ $ curl http://reg.js.ars.is/knoten
 
 ---
 
+# :construction:
+
 **WIP:** This is a description of how the API should work. 
 (why? documentation-driven developement!)
 
 
-## API
+## API Description
 
 - Protocol: `HTTP`
 - Data format: `JSON`
