@@ -17,6 +17,11 @@ app.router.get('/', function () {
   this.res.json({ 'hello': 'world' })
 });
 
+// timestamp
+app.router.get('/time', function () {
+  this.res.json({ 'now': new Date().getTime() })
+});
+
 // get all knoten info
 app.router.get('/knoten', function () {
   var http = this;
