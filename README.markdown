@@ -50,7 +50,8 @@ Response:
 
 - `✓` **Update a `knoten` (send "heartbeat")**:  
 ```sh
-$ curl http://reg.js.ars.is/time
+$ NR=178; $MAC=f00; $PASS="secret" 
+$ NR=178; curl http://reg.js.ars.is/put/knoten/$NR/$MAC/$PASS
 ```
 Response:
 ```js
@@ -67,8 +68,7 @@ Response:
 
 - `✓` **Get a current timestamp**:  
 ```sh
-$ NR=178; $MAC=f00; $PASS="secret" 
-$ NR=178; curl http://reg.js.ars.is/put/knoten/$NR/$MAC/$PASS
+$ curl http://reg.js.ars.is/time
 ```
 Response:
 ```js
