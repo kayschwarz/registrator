@@ -12,15 +12,14 @@
 - `✓` Get all knoten:  
   `wget http://reg.js.ars.is/knoten`
 
+- `✓` Check if a knoten exists:  
+  `NR=178; wget http://reg.js.ars.is/knoten/$NR`
+
 - Auto-Register a knoten:  
   `MAC=c0ffe3; PASS="phrase" && wget http://reg.js.ars.is/post/knoten?MAC=$MAC&PASS=$PASS`
 
 - Update a knoten:  
   `NR=178; MAC=c0ffe3; PASS="phrase" && wget http://reg.js.ars.is/post/knoten?NUMBER=$NR&MAC=$MAC&PASS=$PASS`
-
-- Check if a knoten exists:  
-  `NR=178; wget http://reg.js.ars.is/get/knoten?NUMBER=$NR`
-
 ---
 
 **WIP:** This is a description of how the API should work. 
