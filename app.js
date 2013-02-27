@@ -23,7 +23,13 @@ app.router.get('/knoten/:number', function (number) {
   db.get(number, function(err, obj) {
     // respond with error, if any
     if (err) {
-      app.log.debug(err);
+      // we just assume a 404
+      var e = {
+        status: 404,
+        msg: "Not Found"
+      };
+      http.res.writeHead(e.status, e.msg);
+      http.res.json(e);
       
     } else { // if no error
       // build data
