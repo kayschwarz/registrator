@@ -12,7 +12,8 @@
 {
   "number": 178,
   "mac": "90f652c79eb0",
-  "pass": "hashed private key" // never returned by API
+  "pass": "hashed private key", // never returned by API!
+  "last_seen": 1361993339696    // set by sending 'heartbeat' to API!
 }
 ```
 
@@ -47,9 +48,25 @@ Response:
 }
 ```
 
-- Auto-Register a knoten: `MAC=c0ffe3; PASS="phrase" && wget http://reg.js.ars.is/post/knoten?MAC=$MAC&PASS=$PASS`
+- `✓` **Update a `knoten` (send "heartbeat")**:  
+```sh
+$ NR=178; $MAC=f00; $PASS="secret" 
+$ NR=178; curl http://reg.js.ars.is/put/knoten/$NR/$MAC/$PASS
+```
+Response:
+```js
+{
+  "status" : 200,
+  "msg" : "ok",
+  "result" : {
+    "number" : "178",
+    "mac" : "90f652c79eb0",
+    "last_seen":1361996823533
+  }
+}
+```
 
-- Update a knoten: `NR=178; MAC=c0ffe3; PASS="phrase" && wget http://reg.js.ars.is/post/knoten?NUMBER=$NR&MAC=$MAC&PASS=$PASS`
+- Auto-Register a knoten: `MAC=c0ffe3; PASS="phrase" && wget http://reg.js.ars.is/post/knoten?MAC=$MAC&PASS=$PASS`
 
 
 ---
