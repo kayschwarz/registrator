@@ -18,9 +18,10 @@ app.router.get('/', function () {
 });
 
 // get knoten info
-app.router.get('/knoten/:number', function (number) {
+app.router.get('/knoten', function (number) {
   var http = this;
-  db.get(number, function(err, obj) {
+    
+  db.all(function(err, objs) {
     // respond with error, if any
     if (err) {
       // we just assume a 404
@@ -33,18 +34,12 @@ app.router.get('/knoten/:number', function (number) {
       
     } else { // if no error
       // build data
-      var data = {
-        // the number property is our current value
-        "number": number,
-        // just take the values we want from the db result
-        // (so we could add private metadata)
-        "mac": obj.mac,
-        "pass": obj.pass
-      };
+      var data = Object.keys(objs);
       // send it
       http.res.json(data);
     }
   });
 });
 
+// start http server on port 3000
 app.start(3000);
