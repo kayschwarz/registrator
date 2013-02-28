@@ -12,18 +12,18 @@ app.use(flatiron.plugins.http);
 
 // ROUTER ////////////////////////////////////////////
 
-// homepage
+// HOMEPAGE
 app.router.get('/', function () {
-  this.res.json({ 'hello': 'world' })
+  this.res.json({ 'RTFM': 'https://github.com/eins78/registrator/' })
 });
 
-// timestamp
-app.router.get('/time', function () {
+// TIMESTAMP
+app.router.get('/GET/time', function () {
   this.res.json({ 'now': new Date().getTime() })
 });
 
-// get all knoten info
-app.router.get('/knoten', function () {
+// LIST: get all knoten info
+app.router.get('/GET/knoten', function () {
   var http = this;
     
   db.all(function(err, objs) {
@@ -50,9 +50,8 @@ app.router.get('/knoten', function () {
   });
 });
 
-
-// get single knoten info
-app.router.get('/knoten/:number', function (number) {
+// CHECK: get single knoten info
+app.router.get('/GET/knoten/:number', function (number) {
   var http = this;
     
   db.get(number, function(err, obj) {
@@ -84,71 +83,72 @@ app.router.get('/knoten/:number', function (number) {
   });
 });
 
-// Auto-Reg: knoten without number, but mac pass
-app.router.get('/put/knoten/:mac/:pass', function (mac, pass) {
+// AUTOREG: knoten without number, but mac pass
+app.router.get('/PUT/knoten/:mac/:pass', function (mac, pass) {
   var http = this,      
       data = {};
-  
-  
-  db.get(number, function(err, knoten) {
-    // respond with error, if any
-    if (err) {
-      console.log(require('eyes').inspect(err));
-      
-      // we just assume a 404
-      var e = {
-        "status": 404,
-        "msg": "Not Found"
-      };
-      http.res.writeHead(e.status, e.msg);
-      http.res.json(e);
-      
-    } else { // if no error
-      
-      // timestamp the received object
-      knoten.last_seen = new Date().getTime();
-      
-      // save back to db
-      db.save(number, knoten, function(err) {
-        
-        if (err) {
-          
-          // db error at this stage is our fault
+    
+  // since we have a simple db, we just get it all 
+  db.all(function (err, res) {
+    
+    // read in all keys, in NUMERICAL order
+    var numbers = Object.keys(res).sort(function(a,b){return a-b});
+    
+    // check if mac already exists
+    Object.keys(res).forEach(function (knoten) {
+            
+      if (mac === res[knoten].mac) {
+      // we know this mac!
+            
+        if (pass !== res[knoten].pass) {
+                    
+          // but the pass is wrong: Error 401 Unauthorized
           var e = {
-            "status": 500,
-            "msg": "Server Error"
+            "status": 401,
+            "msg": "Wrong $PASS"
           };
-          
+          http.res.writeHead(e.status, e.msg);
           http.res.writeHead(e.status, e.msg);
           http.res.json(e);
-          
-          
+        
         } else {
-          
-          // build answer
-          var a = {
-            "status": 200,
-            "msg": "ok",
+        
+          // known mac, with right pass: error "Exists"
+          var e = {
+            "status": 303,
+            "msg": "already exists",
+            "location": "/knoten/" + knoten,
             "result": {
-              // number is still the number
-              "number": number,
-              // we pick the just values we want from the db result
-              "mac": knoten.mac,
-              "last_seen": knoten["last_seen"]
+              "number": knoten,
+              // we pick just the values we want from the db result
+              "mac": res[knoten].mac
             }
           };
-          
-          // send it
-          http.res.json(a);
-          
+          http.res.writeHead(e.status, e.msg);
+          http.res.json(e);
         }
-      });
-    }
-  });  
+      }
+      
+    });
+    
+    // the mac does not already exist, so we continue
+
+    // FIMXE: need fresh number here
+
+    // build answer
+    var a = {
+      "status": 501,
+      "msg": "not implemented",
+    };        
+    // send it
+    http.res.json(a);
+    
+    
+  });            
 });
 
-// PUT single knoten with data (auto-reg or heartbeat)
-app.router.get('/put/knoten/:number/:mac/:pass', function (number, mac, pass) {
+// HEARTBEAT: put single knoten with complete data
+app.router.get('/PUT/knoten/:number/:mac/:pass', function (number, mac, pass) {
   var http = this,      
       data = {};
         

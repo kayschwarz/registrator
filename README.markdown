@@ -7,6 +7,7 @@
 
 ## TL;DR
 
+- the API is `wget`-friendly (all commands work without any flags)
 - This is a `knoten`:  
 ```js
 {
