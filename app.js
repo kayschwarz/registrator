@@ -48,7 +48,8 @@ app.router.get('/PUT/knoten/:mac/:pass', function (mac, pass) {
 
 // HEARTBEAT: PUT knoten with complete data
 app.router.get('/PUT/knoten/:number/:mac/:pass', function (number, mac, pass) {
-  app.register.heartbeat(number, mac, pass, this);
+  var knoten = { "number": number, "mac": mac, "pass": pass };
+  app.register.update(knoten, this);
 });
 
 // TIMESTAMP: GET /time
