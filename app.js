@@ -24,9 +24,15 @@ app.router.get('/', function () {
 app.router.get('/GET/knoten', function () {
   app.register.getAll(this);
 });
+app.router.get('/knoten', function () {
+  app.register.getAll(this);
+});
 
 // CHECK/INFO: GET knoten with number
 app.router.get('/GET/knoten/:number', function (number) {
+  app.register.check(number, this);
+});
+app.router.get('/knoten/:number', function (number) {
   app.register.check(number, this);
 });
 
@@ -38,11 +44,6 @@ app.router.get('/GET/knoten/:number', function (number) {
 // AUTOREG: PUT knoten without number, but mac and pass
 app.router.get('/PUT/knoten/:mac/:pass', function (mac, pass) {
   app.register.reg(mac, pass, this);
-});
-
-// FULLREG: PUT knoten with number, mac and pass
-app.router.get('/PUT/knoten/:number/:mac/:pass', function (mac, pass) {
-  app.register.reg(number, mac, pass, this);
 });
 
 // HEARTBEAT: PUT knoten with complete data
