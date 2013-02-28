@@ -30,9 +30,19 @@ app.router.get('/GET/knoten/:number', function (number) {
   app.register.check(number, this);
 });
 
+// TODO: get knoten property
+// app.router.get('/GET/knoten/:number/:property', function (number) {
+//   app.register.check(number, property, this);
+// });
+
 // AUTOREG: PUT knoten without number, but mac and pass
 app.router.get('/PUT/knoten/:mac/:pass', function (mac, pass) {
   app.register.reg(mac, pass, this);
+});
+
+// FULLREG: PUT knoten with number, mac and pass
+app.router.get('/PUT/knoten/:number/:mac/:pass', function (mac, pass) {
+  app.register.reg(number, mac, pass, this);
 });
 
 // HEARTBEAT: PUT knoten with complete data

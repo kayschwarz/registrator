@@ -1,13 +1,17 @@
 # Weimarnetz Registrator
 
-> :four_leaf_clover: EARN **KNOTEN NUMBERS** JUST BY WORKING FROM HOME! :house:  
-> :rocket: LOOSE 50 PACKETS IN **JUST MILISECONDS**! :ramen:  
->  :boom:ENLARGE YOUR **MESH NET**! :checkered_flag:  
+The `registrator` is a http webservice for assigning internal node numbers for freifunk mesh networks (aka. "ghetto dhcp").
 
+You can reach the service [somewhere else](http://reg.js.ars.is), but below is some help on how to use it.  
+
+The API is `curl`-, `wget`- and scripting-friendly.
+
+- `JSON`-only
+- instead of `HTTP` verbs and parameters, we use simple paths (i.e. `GET /PUT/res/:any/:key`, not `PUT /res?any=any&key=key`)
+- instead of `HTTP` headers, we also use `JSON`
 
 ## TL;DR
 
-- the API is `wget`-friendly (all commands work without any flags)
 - This is a `knoten`:  
 ```js
 {
@@ -20,7 +24,7 @@
 
 - `✓` **Get all `knoten` numbers**:  
 ```sh
-$ curl http://reg.js.ars.is/knoten
+$ curl http://reg.js.ars.is/GET/knoten
 ```
 ```js
 {
@@ -35,7 +39,7 @@ $ curl http://reg.js.ars.is/knoten
 
 - `✓` **Check if a `knoten` exists**:  
 ```sh
-$ NR=178; curl http://reg.js.ars.is/knoten/$NR
+$ NR=178; curl http://reg.js.ars.is/GET/knoten/$NR
 ```
 Response:
 ```js
@@ -47,6 +51,10 @@ Response:
     "mac" : "90f652c79eb0"
   }
 }
+```
+or:
+```js
+{ "status": 404, "msg": "Not Found" }
 ```
 
 - `✓` **Update a `knoten` (send "heartbeat")**:  
