@@ -7,10 +7,12 @@ var flatiron  = require('flatiron'),
 // app: config
 app.config.file({ file: path.join(__dirname, 'config', 'config.json') });
 
-// app: `http` plugin
+// app: `http`, `cli` plugins
 app.use(flatiron.plugins.http);
+//app.use(flatiron.plugins.cli);
 
-// app: `register` module
+// app: internal modules
+app.use(require("./lib/errors"), { "style": "http" } );
 app.use(require("./lib/register"), { "networks": ['ffweimar'] } );
 
 // ROUTER ////////////////////////////////////////////
@@ -28,7 +30,7 @@ app.router.get('/knoten', function () {
   app.register.getAll(this);
 });
 
-// CHECK/INFO: GET knoten with number
+// CHECK/INFO: GET /knoten/number
 app.router.get('/GET/knoten/:number', function (number) {
   app.register.check(number, this);
 });
@@ -41,15 +43,32 @@ app.router.get('/knoten/:number', function (number) {
 //   app.register.check(number, property, this);
 // });
 
-// AUTOREG: PUT knoten without number, but mac and pass
-app.router.get('/PUT/knoten/:mac/:pass', function (mac, pass) {
-  app.register.reg(mac, pass, this);
+// AUTOREGISTER: POST knoten, needs mac and pass
+app.router.get('/POST/knoten', function () {
+  var http = this, 
+  
+  mac = http.req.query.mac || null,
+  pass = http.req.query.pass || null;
+  
+  app.register.create(mac, pass, function(err, res) {
+    http.res.json(err || res);
+  });
+  
 });
 
-// HEARTBEAT: PUT knoten with complete data
-app.router.get('/PUT/knoten/:number/:mac/:pass', function (number, mac, pass) {
-  var knoten = { "number": number, "mac": mac, "pass": pass };
-  app.register.update(knoten, this);
+// HEARTBEAT: PUT knoten/number, needs mac and pass
+// - special: if number has no pass, set to given pass
+app.router.get('/PUT/knoten/:number', function (number) {
+  var http = this,
+  
+  mac = http.req.query.mac || null,
+  pass = http.req.query.pass || null;
+  number = number || null;
+  
+  app.register.update(number, mac, pass, function(err, res) {
+    http.res.json(err || res);
+  });
+  
 });
 
 // TIMESTAMP: GET /time
