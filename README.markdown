@@ -99,14 +99,14 @@ Response:
 
 - Protocol: `HTTP`
 - Data format: `JSON`
-- Base URL: <http://reg.js.ars.is/>
-- Authentication: `?`
-- For client compatibility we supply shortcuts to be used instead of real HTTP verbs (i.e. `POST /` === `GET /post`)
+- Base URL: <http://reg.js.ars.is/yournetwork>
+- Authentication: simple passphrase (hashing TBD)
+- For client compatibility we supply shortcuts to be used instead of real HTTP verbs (i.e. `POST /` === `GET /POST`)
 
 ### Error handling
 
 - response with status code (like `http`'s)
-- example: `{ "status": "514" }`
+- example: `{ "status": "514", "message": "I'm a teapot!" }`
 
 ## Resources, Methods, Calls
 
@@ -121,28 +121,48 @@ Returns an array of all registered knoten.
 - *Request method:* `GET`
 - *Parameters:* None
 - *Authentication:* None
-- *Example request:* `curl -X GET http://reg.js.ars.is/knoten`
+- *Example request:* `curl http://reg.js.ars.is/testnet/knoten`
 - *Example response:* `{ "knoten": [ {knoten}, {knoten}, {knoten} ] }`
 
-### Update or auto-register a `KNOTEN`
+### Get single `KNOTEN` info
+
+Returns an array of all registered knoten.
+
+- *Request path:* `/knoten/:number`
+- *Request method:* `GET`
+- *Parameters:* None
+- *Authentication:* None
+- *Example request:* `curl http://reg.js.ars.is/testnet/knoten/178`
+- *Example response:* `{ "status": 200, "msg":"ok", "result": { "number": "178", "mac": "xxxx" } }`
+
+### Register new `KNOTEN`
+
+- *Request path:* `/knoten`
+- *Request method:* `POST`
+- *Parameters:* None
+- *Authentication:* None
+- *Example request:* `wget http://reg.js.ars.is/POST/knoten`
+- *Example response:* `{ "status": 200, "msg":"ok", "result": { "number": "178", "mac": "xxxx" } }`
+
+
+### Update a `KNOTEN` ("heartbeat")
 
 Marks the knoten "as seen" (so it will not be deleted from the pool).
-If there is no knoten with the supplied number, the server may create it if all paramaters are given.
 
-- *Request path:* `/knoten`
+If there is no knoten with the supplied number, the server may create it if all parameters are given (this enables costum registration with a *wunsch*-number).
+
+- *Request path:* `/knoten/:number?mac=string&pass=string`
 - *Request method:* `PUT`
-- *Request Parameters:* [`NUMBER`], `MAC`, `pass`
+- *Request Parameters:* `NUMBER`, `MAC`, `pass`
 - *Request Body:* None
 - *Authentication:* None
-- *Example request:* `curl -X GET http://reg.js.ars.is/knoten`
-- *Example response:* `{ "status": "200", "knoten": {knoten} }` -- kleinste verfügbare nummer >=2
+- *Example request:* `wget http://reg.js.ars.is/knoten/178?mac=caffee&pass=secret`
+- *Example response:* `{ "status": 200, "msg":"ok", "result": { "number": "178", "mac": "xxxx" } }`
 
-### Reserve a new `KNOTEN` number
 
-- *Request path:* `/knoten`
-- *Request method:* `GET`
-- *Parameters:* `NUMBER`, "passphrase"
-- *Authentication:* None
-- *Example request:* `curl -X GET http://reg.js.ars.is/knoten`
-- *Example response:* `{ "knoten": [ {knoten}, {knoten}, {knoten} ] }`
+## Internal
 
+### Reservations
+
+DB entry with just number, but no mac and pass? It's a "reserved" number. It won't be assigned by autoregistration, but anyone can capture the number by sending a valid `heartbeat`.
+This enables smooth migration from [existing networks](https://github.com/eins78/registrator/blob/master/weimarnetz.json).
