@@ -1,0 +1,22 @@
+{
+  "networks": [
+    {
+      "slug": "ffweimar",
+      "active": false,
+      "public": false,
+      "url": "http://weimarnetz.de",
+      "minimum": 2,
+      "maximum": 1000,
+      "lease_days": 30
+    },
+    {
+      "slug": "testnet",
+      "active": true,
+      "public": true,
+      "url": "http://github.com/eins78/registrator",
+      "minimum": 2,
+      "maximum": 1000,
+      "lease_days": 30
+    }
+  ]
+}
