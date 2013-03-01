@@ -4,87 +4,50 @@ The `registrator` is a http webservice for assigning internal node numbers for f
 
 You can reach the service [somewhere else](http://reg.js.ars.is), but below is some help on how to use it.  
 
-The API is `curl`-, `wget`- and scripting-friendly.
+The API is `curl`-, `wget`- and scripting-friendly:
 
 - `JSON`-only
-- instead of `HTTP` verbs and parameters, we use simple paths (i.e. `GET /PUT/res/:any/:key`, not `PUT /res?any=any&key=key`)
+- instead of `HTTP` verbs and parameters, we use simple paths (i.e. `GET /PUT/resource/item`, not `PUT /resource/item`)
 - instead of `HTTP` headers, we also use `JSON`
 
 ## TL;DR
 
-- This is a `knoten`:  
-```js
-{
-  "number": 178,
-  "mac": "90f652c79eb0",
-  "pass": "hashed private key", // never returned by API!
-  "last_seen": 1361993339696    // set by sending 'heartbeat' to API!
-}
-```
+- This is a `knoten`:
 
-- `✓` **Get all `knoten` numbers**:  
-```sh
-$ curl http://reg.js.ars.is/GET/knoten
-```
-```js
-{
-  "status" : 200,
-  "msg" : "ok",
-  "result" : [
-    "64",
-    "178"
-  ]
-}
-```
+    ```js
+    {
+      "number": 178,
+      "mac": "90f652c79eb0",
+      "pass": "yoursecret",         // never returned by API!
+      "last_seen": 1361993339696    // set by sending 'heartbeat' to API!
+    }
+    ```
 
-- `✓` **Check if a `knoten` exists**:  
-```sh
-$ NR=178; curl http://reg.js.ars.is/GET/knoten/$NR
-```
-Response:
-```js
-{
-  "status" : 200,
-  "msg" : "ok",
-  "result" : {
-    "number" : "178",
-    "mac" : "90f652c79eb0"
-  }
-}
-```
-or:
-```js
-{ "status": 404, "msg": "Not Found" }
-```
+- `✓` **Auto-Register a knoten**:
 
-- `✓` **Update a `knoten` (send "heartbeat")**:  
-```sh
-$ NR=178; $MAC=f00; $PASS="secret" 
-$ NR=178; curl http://reg.js.ars.is/put/knoten/$NR/$MAC/$PASS
-```
-Response:
-```js
-{
-  "status" : 200,
-  "msg" : "ok",
-  "result" : {
-    "number" : "178",
-    "mac" : "90f652c79eb0",
-    "last_seen":1361996823533
-  }
-}
-```
+    ```sh
+    $ MAC=f00; PASS="secret"
+    $ wget http://reg.js.ars.is/POST/knoten?mac=$MAC&pass=$PASS
+    ```
+    Response:
+    ```js
+    { "status" : 201, "msg" : "ok", 
+      "result" : { "number" : "178", "mac" : "90f652c79eb0", "last_seen":1361996823533 } 
+    }
+    ```
 
-- `✓` **Get a current timestamp**:  
-```sh
-$ curl http://reg.js.ars.is/time
-```
-Response:
-```js
-{ "now": 1362000948023 }
-```
-
-- Auto-Register a knoten: `MAC=c0ffe3; PASS="phrase" && wget http://reg.js.ars.is/post/knoten?MAC=$MAC&PASS=$PASS`
+- `✓` **Update a `knoten` ("heartbeat")**:
+    
+    ```sh
+    $ NR=178; $MAC=f00; $PASS="secret" 
+    $ wget http://reg.js.ars.is/PUT/knoten/$NR?mac=$MAC&pass=$PASS
+    ```
+    Response:
+    ```js
+    { "status" : 200, "msg" : "ok", 
+      "result" : { "number" : "178", "mac" : "90f652c79eb0", "last_seen":1361996823533 }
+    }
+    ```
 
 
 ---
@@ -108,7 +71,7 @@ Response:
 - response with status code (like `http`'s)
 - example: `{ "status": "514", "message": "I'm a teapot!" }`
 
-## Resources, Methods, Calls
+## Calls
 
 All methods deal with just one kind of resource (a single router, or "knoten").
 It follows a list of applicable methods (or actions).
@@ -122,7 +85,15 @@ Returns an array of all registered knoten.
 - *Parameters:* None
 - *Authentication:* None
 - *Example request:* `curl http://reg.js.ars.is/testnet/knoten`
-- *Example response:* `{ "knoten": [ {knoten}, {knoten}, {knoten} ] }`
+- *Example response:* 
+    
+    ```js
+    { 
+      "status": 200, 
+      "msg": "ok", 
+      "result": [ 1, 2, 3 ] 
+    }
+    ```
 
 ### Get single `KNOTEN` info
 
@@ -133,16 +104,39 @@ Returns an array of all registered knoten.
 - *Parameters:* None
 - *Authentication:* None
 - *Example request:* `curl http://reg.js.ars.is/testnet/knoten/178`
-- *Example response:* `{ "status": 200, "msg":"ok", "result": { "number": "178", "mac": "xxxx" } }`
+- *Example response:* 
+    
+    ```js
+    { 
+      "status": 200, 
+      "msg": "ok", 
+      "result": { 
+        "number": "178", 
+        "mac": "xxxx", 
+        "last_seen": 1362151832050 
+      } 
+    }
+    ```
 
 ### Register new `KNOTEN`
 
 - *Request path:* `/knoten`
 - *Request method:* `POST`
-- *Parameters:* None
+- *Parameters:* `MAC`, `PASS`
 - *Authentication:* None
-- *Example request:* `wget http://reg.js.ars.is/POST/knoten`
-- *Example response:* `{ "status": 200, "msg":"ok", "result": { "number": "178", "mac": "xxxx" } }`
+- *Example request:* `wget http://reg.js.ars.is/POST/knoten?mac=lalala&pass=secret`
+- *Example response:*
+
+    ```js
+    { "status": 200, 
+      "msg": "ok", 
+      "result": { 
+        "number": "178", 
+        "mac": "xxxx", 
+        "last_seen": 1362151832050 
+      } 
+    }
+    ```
 
 
 ### Update a `KNOTEN` ("heartbeat")
@@ -151,13 +145,42 @@ Marks the knoten "as seen" (so it will not be deleted from the pool).
 
 If there is no knoten with the supplied number, the server may create it if all parameters are given (this enables costum registration with a *wunsch*-number).
 
-- *Request path:* `/knoten/:number?mac=string&pass=string`
+If there is already a knoten with this number but no pass, it is a ["reserved"](#reservations) number. The pass is set by whoever sends the first valid update.
+
+- *Request path:* `/knoten/:number`
 - *Request method:* `PUT`
-- *Request Parameters:* `NUMBER`, `MAC`, `pass`
-- *Request Body:* None
-- *Authentication:* None
+- *Request Parameters:* `MAC`, `PASS`
+- *Authentication:* passphrase, if set
 - *Example request:* `wget http://reg.js.ars.is/knoten/178?mac=caffee&pass=secret`
-- *Example response:* `{ "status": 200, "msg":"ok", "result": { "number": "178", "mac": "xxxx" } }`
+- *Example response:*
+
+    ```js
+    { "status": 200, 
+      "msg": "ok", 
+      "result": { 
+        "number": "178", 
+        "mac": "xxxx", 
+        "last_seen" :1362151832050 
+      } 
+    }
+    ```
+
+
+### Get current time
+
+Just a timestamp from the server. If we do our own `DHCP`, why not `NTP` as well… `;)`
+
+- *Request path:* `/time`
+- *Request method:* `GET`
+- *Request Parameters:* None
+- *Authentication:* None
+- *Example request:* `wget http://reg.js.ars.is/GET/time`
+- *Example response:*
+
+    ```js
+    { "now": 1362153043220 }
+    ```
+
 
 
 ## Internal
