@@ -32,10 +32,10 @@ app.router.get('/knoten', function () {
 
 // CHECK/INFO: GET /knoten/number
 app.router.get('/GET/knoten/:number', function (number) {
-  app.register.check(number, this);
+  app.register.get(number, this);
 });
 app.router.get('/knoten/:number', function (number) {
-  app.register.check(number, this);
+  app.register.get(number, this);
 });
 
 // TODO: get knoten property

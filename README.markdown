@@ -166,3 +166,9 @@ If there is no knoten with the supplied number, the server may create it if all 
 
 DB entry with just number, but no mac and pass? It's a "reserved" number. It won't be assigned by autoregistration, but anyone can capture the number by sending a valid `heartbeat`.
 This enables smooth migration from [existing networks](https://github.com/eins78/registrator/blob/master/weimarnetz.json).
+
+### Lease time
+
+TODO: implement and document
+
+- numbers "last_seen" more than 30 days ago are purged from the db?
