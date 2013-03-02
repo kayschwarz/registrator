@@ -43,8 +43,8 @@ var getKnoten = function (number) {
   });
 };
 
-app.router.get('/knoten/:number', getKnoten(number));
-app.router.get('/GET/knoten/:number', getKnoten(number));
+app.router.get('/knoten/:number', getKnoten);
+app.router.get('/GET/knoten/:number', getKnoten);
 
 // TODO: get knoten property
 // app.router.get('/GET/knoten/:number/:property', function (number) {
@@ -64,8 +64,8 @@ var postKnoten = function () {
   
 };
 
-app.router.post('/knoten', postKnoten(number));
-app.router.get('/POST/knoten', postKnoten(number));
+app.router.post('/knoten', postKnoten);
+app.router.get('/POST/knoten', postKnoten);
 
 // ## HEARTBEAT: PUT knoten/number, needs mac and pass
 // - special: if number has no pass, set to given pass
@@ -82,16 +82,16 @@ var putKnoten = function (number) {
   
 };
 
-app.router.put('/knoten/:number', putKnoten(number));
-app.router.get('/PUT/knoten/:number', putKnoten(number));
+app.router.put('/knoten/:number', putKnoten);
+app.router.get('/PUT/knoten/:number', putKnoten);
 
 // ## TIMESTAMP: GET /time
 var getTime = function () {
   this.res.json({ 'now': new Date().getTime() })
 };
 
-app.router.get('/time', getTime());
-app.router.get('/GET/time', getTime());
+app.router.get('/time', getTime);
+app.router.get('/GET/time', getTime);
 
 // start http server on configured port
 app.start(app.config.get('port'));
