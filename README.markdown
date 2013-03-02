@@ -1,10 +1,18 @@
 # Weimarnetz Registrator
 
-The `registrator` is a http webservice for assigning internal node numbers for freifunk mesh networks (aka. "ghetto dhcp").
+---
+
+# :construction: WIP :construction:
+
+- **Status**: almost done, test it according to this README.
+
+---
+
+The `registrator` is a http webservice for assigning internal node numbers for freifunk (or other) mesh networks (aka. "ghetto dhcp").
 
 You can reach the service [somewhere else](http://reg.js.ars.is), but below is some help on how to use it.  
 
-The API is `curl`-, `wget`- and scripting-friendly:
+The API is browser-, `curl`-, `wget`- and scripting-friendly:
 
 - `JSON`-only
 - instead of `HTTP` verbs and parameters, we use simple paths (i.e. `GET /PUT/resource/item`, not `PUT /resource/item`)
@@ -27,7 +35,7 @@ The API is `curl`-, `wget`- and scripting-friendly:
 
     ```sh
     $ MAC=f00; PASS="secret"
-    $ wget http://reg.js.ars.is/POST/knoten?mac=$MAC&pass=$PASS
+    $ wget "http://reg.js.ars.is/POST/knoten?mac=$MAC&pass=$PASS"
     ```
     Response:
     ```js
@@ -40,7 +48,7 @@ The API is `curl`-, `wget`- and scripting-friendly:
     
     ```sh
     $ NR=178; $MAC=f00; $PASS="secret" 
-    $ wget http://reg.js.ars.is/PUT/knoten/$NR?mac=$MAC&pass=$PASS
+    $ wget "http://reg.js.ars.is/PUT/knoten/$NR?mac=$MAC&pass=$PASS"
     ```
     Response:
     ```js
@@ -48,14 +56,6 @@ The API is `curl`-, `wget`- and scripting-friendly:
       "result" : { "number" : "178", "mac" : "90f652c79eb0", "last_seen":1361996823533 }
     }
     ```
-
-
----
-
-# :construction:
-
-**WIP:** This is a description of how the API should work. 
-(why? documentation-driven developement!)
 
 
 ## API Description
@@ -84,7 +84,7 @@ Returns an array of all registered knoten.
 - *Request method:* `GET`
 - *Parameters:* None
 - *Authentication:* None
-- *Example request:* `curl http://reg.js.ars.is/testnet/knoten`
+- *Example request:* `curl "http://reg.js.ars.is/knoten"`
 - *Example response:* 
     
     ```js
@@ -103,7 +103,7 @@ Returns an array of all registered knoten.
 - *Request method:* `GET`
 - *Parameters:* None
 - *Authentication:* None
-- *Example request:* `curl http://reg.js.ars.is/testnet/knoten/178`
+- *Example request:* `curl "http://reg.js.ars.is/testnet/knoten/178"`
 - *Example response:* 
     
     ```js
@@ -124,15 +124,15 @@ Returns an array of all registered knoten.
 - *Request method:* `POST`
 - *Parameters:* `MAC`, `PASS`
 - *Authentication:* None
-- *Example request:* `wget http://reg.js.ars.is/POST/knoten?mac=lalala&pass=secret`
+- *Example request:* `curl  "http://reg.js.ars.is/POST/knoten?mac=12345&pass=secret"`
 - *Example response:*
 
     ```js
     { "status": 200, 
       "msg": "ok", 
       "result": { 
-        "number": "178", 
-        "mac": "xxxx", 
+        "number": "2", 
+        "mac": "12345", 
         "last_seen": 1362151832050 
       } 
     }
@@ -151,7 +151,7 @@ If there is already a knoten with this number but no pass, it is a ["reserved"](
 - *Request method:* `PUT`
 - *Request Parameters:* `MAC`, `PASS`
 - *Authentication:* passphrase, if set
-- *Example request:* `wget http://reg.js.ars.is/knoten/178?mac=caffee&pass=secret`
+- *Example request:* `curl "http://reg.js.ars.is/knoten/178?mac=caffee&pass=secret"`
 - *Example response:*
 
     ```js
@@ -159,7 +159,7 @@ If there is already a knoten with this number but no pass, it is a ["reserved"](
       "msg": "ok", 
       "result": { 
         "number": "178", 
-        "mac": "xxxx", 
+        "mac": "caffee", 
         "last_seen" :1362151832050 
       } 
     }
@@ -174,7 +174,7 @@ Just a timestamp from the server. If we do our own `DHCP`, why not `NTP` as well
 - *Request method:* `GET`
 - *Request Parameters:* None
 - *Authentication:* None
-- *Example request:* `wget http://reg.js.ars.is/GET/time`
+- *Example request:* `curl "http://reg.js.ars.is/GET/time"`
 - *Example response:*
 
     ```js
@@ -192,6 +192,34 @@ This enables smooth migration from [existing networks](https://github.com/eins78
 
 ### Lease time
 
-TODO: implement and document
-
 - numbers "last_seen" more than 30 days ago are purged from the db?
+- current status: numbers "last_seen" more than 30 days ago are given out for auto-registration
+- once a central monitoring is in place, lease time can also be updated by the mon. api, after a 'heartbeat' is reveived there
+
+### Networks
+
+- Not implemented
+
+This is a network (can only be set up manually):
+```js
+{
+  "name": "testnet",
+  "active": true,
+  "public": true,
+  "url": "http://github.com/eins78/registrator",
+  "minimum": 2,
+  "maximum": 1000,
+  "lease_days": 30
+}
+```
+
+### Status Site
+
+- Not implemented
+
+- render html on front page
+- give help
+- list networks
+- network pages
+    * list all `knoten`
+- auto-update with socket.io
