@@ -9,7 +9,6 @@ app.config.file({ file: path.join(__dirname, 'config', 'config.json') });
 
 // app: `http`, `cli` plugins
 app.use(flatiron.plugins.http);
-//app.use(flatiron.plugins.cli);
 
 // app: internal modules
 app.use(require("./lib/errors"), { "style": "http" } );
