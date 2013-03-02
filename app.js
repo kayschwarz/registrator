@@ -7,7 +7,7 @@ var flatiron  = require('flatiron'),
 // app: config
 app.config.file({ file: path.join(__dirname, 'config', 'config.json') });
 
-// app: `http`, `cli` plugins
+// app: `http`, plugins
 app.use(flatiron.plugins.http);
 
 // app: internal modules
