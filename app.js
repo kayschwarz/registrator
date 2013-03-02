@@ -23,18 +23,36 @@ app.router.get('/', function () {
 
 // LIST: GET /knoten
 app.router.get('/GET/knoten', function () {
-  app.register.getAll(this);
+  var http = this;
+  
+  app.register.getAll(function(err, res) {
+    http.res.json(err || res);
+  });
+  
 });
 app.router.get('/knoten', function () {
-  app.register.getAll(this);
+  var http = this;
+  
+  app.register.getAll(function(err, res) {
+    http.res.json(err || res);
+  });
+  
 });
 
 // CHECK/INFO: GET /knoten/number
 app.router.get('/GET/knoten/:number', function (number) {
-  app.register.get(number, this);
+  var http = this;
+  
+  app.register.get(number, function(err, res) {
+    http.res.json(err || res);
+  });
 });
 app.router.get('/knoten/:number', function (number) {
-  app.register.get(number, this);
+  var http = this;
+  
+  app.register.get(number, function(err, res) {
+    http.res.json(err || res);
+  });
 });
 
 // TODO: get knoten property
