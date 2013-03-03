@@ -1,18 +1,18 @@
 var flatiron  = require('flatiron'),
     path      = require('path'),
-    app       = flatiron.app,
-    Database  = require('simple-js'), // database: json in fs
-    db        = new Database("db"); // a folder "db"
+    app       = flatiron.app;
 
 // app: config
 app.config.file({ file: path.join(__dirname, 'config', 'config.json') });
+// app: networks config
+app.config.file('networks', { file: path.join(__dirname, 'config', 'networks.json') });
 
 // app: `http`, plugins
 app.use(flatiron.plugins.http);
 
 // app: internal modules
-app.use(require("./lib/errors"), { "style": "http" } );
-app.use(require("./lib/register"), { "networks": ['ffweimar'] } );
+app.use(require("./lib/errors"));
+app.use(require("./lib/register"));
 
 // # ROUTER
 
