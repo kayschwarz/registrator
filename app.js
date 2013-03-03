@@ -23,6 +23,7 @@ app.router.get('/', function () {
 
 // ## LIST: GET /knoten
 var getAll = function () {
+  
   var http = this;
   
   app.register.getAll(null, function(err, res) {
@@ -33,6 +34,42 @@ var getAll = function () {
 
 app.router.get('/knoten', getAll);
 app.router.get('/GET/knoten', getAll);
+
+// ## LIST: GET /knoten/list/property
+var listAll = function (property) {
+  
+  var http = this,
+      givenprops = [],
+      properties = [];
+  
+  givenprops.push(property);
+  ["properties", "property", "props", "prop"].forEach(function(key) {
+    givenprops = givenprops.concat(http.req.query[key]);
+  });
+  
+  ["number", "mac", "knoten"].forEach(function(prop) {
+    if (givenprops.indexOf(prop) !== -1 || givenprops.indexOf(prop + 's') !== -1) {
+      properties.push(prop);
+    }
+    if (http.req.query[prop] || http.req.query[prop + 's']) {
+      if (http.req.query[prop] !== "false" || http.req.query[prop + 's'] !== "false") {
+        properties.push(prop);        
+      }
+    }
+  });
+    
+  app.register.getAll(properties, function(err, res) {
+    http.res.end(JSON.stringify((err || res), null, 2));
+  });
+  
+};
+
+app.router.get('/knoten/list', listAll);
+app.router.get('/knoten/list', listAll);
+app.router.get('/GET/knoten/list/', listAll);
+app.router.get('/GET/knoten/list/', listAll);
+app.router.get('/knoten/list/:property', listAll);
+app.router.get('/GET/knoten/list/:property', listAll);
 
 // ## CHECK/INFO: GET /knoten/number
 var getKnoten = function (number) {
@@ -45,11 +82,6 @@ var getKnoten = function (number) {
 
 app.router.get('/knoten/:number', getKnoten);
 app.router.get('/GET/knoten/:number', getKnoten);
-
-// TODO: get knoten property
-// app.router.get('/GET/knoten/:number/:property', function (number) {
-//   app.register.check(number, property, this);
-// });
 
 // ## AUTOREGISTER: POST knoten, needs mac and pass
 var postKnoten = function () {
