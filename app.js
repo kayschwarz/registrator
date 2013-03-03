@@ -25,7 +25,7 @@ app.router.get('/', function () {
 var getAll = function () {
   var http = this;
   
-  app.register.getAll(function(err, res) {
+  app.register.getAll(null, function(err, res) {
     http.res.end(JSON.stringify((err || res), null, 2));
   });
   
