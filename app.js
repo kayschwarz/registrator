@@ -26,7 +26,7 @@ var getAll = function () {
   var http = this;
   
   app.register.getAll(function(err, res) {
-    http.res.json(err || res);
+    http.res.end(JSON.stringify((err || res), null, 2));
   });
   
 };
@@ -39,7 +39,7 @@ var getKnoten = function (number) {
   var http = this;
   
   app.register.get(number, function(err, res) {
-    http.res.json(err || res);
+    http.res.end(JSON.stringify((err || res), null, 2));
   });
 };
 
@@ -59,7 +59,7 @@ var postKnoten = function () {
   pass = http.req.query.pass || null;
   
   app.register.create(mac, pass, function(err, res) {
-    http.res.json(err || res);
+    http.res.end(JSON.stringify((err || res), null, 2));
   });
   
 };
@@ -77,7 +77,7 @@ var putKnoten = function (number) {
   number = number || null;
   
   app.register.update(number, mac, pass, function(err, res) {
-    http.res.json(err || res);
+    http.res.end(JSON.stringify((err || res), null, 2));
   });
   
 };
@@ -87,7 +87,7 @@ app.router.get('/PUT/knoten/:number', putKnoten);
 
 // ## TIMESTAMP: GET /time
 var getTime = function () {
-  this.res.json({ 'now': new Date().getTime() })
+  this.res.end(JSON.stringify({ 'now': new Date().getTime() }, null, 2));
 };
 
 app.router.get('/time', getTime);
