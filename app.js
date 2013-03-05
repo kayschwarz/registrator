@@ -22,20 +22,6 @@ app.router.get('/', function () {
 });
 
 // ## LIST: GET /knoten
-var getAll = function () {
-  
-  var http = this;
-  
-  app.register.getAll(null, function(err, res) {
-    http.res.end(JSON.stringify((err || res), null, 2));
-  });
-  
-};
-
-app.router.get('/knoten', getAll);
-app.router.get('/GET/knoten', getAll);
-
-// ## LIST: GET /knoten/list/property
 var listAll = function (property) {
   
   var http = this,
@@ -64,12 +50,13 @@ var listAll = function (property) {
   
 };
 
-app.router.get('/knoten/list', listAll);
-app.router.get('/knoten/list', listAll);
-app.router.get('/GET/knoten/list/', listAll);
-app.router.get('/GET/knoten/list/', listAll);
-app.router.get('/knoten/list/:property', listAll);
-app.router.get('/GET/knoten/list/:property', listAll);
+app.router.get('/knoten', listAll);
+app.router.get('/GET/knoten', listAll);
+
+app.router.get('/list/:property', listAll);
+app.router.get('/GET/list/:property', listAll);
+app.router.get('/lists/:property', listAll);
+app.router.get('/GET/lists/:property', listAll);
 
 // ## CHECK/INFO: GET /knoten/number
 var getKnoten = function (number) {
