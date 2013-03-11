@@ -1,11 +1,12 @@
 {
+  "name": "registrator",
   "description": "weimarnetz registrator service",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "dependencies": {
-    "union": "0.3.5",
-    "flatiron": "0.3.3",
-    "simple-js": "0.1.5"
+    "union": "0.3.x",
+    "flatiron": "0.3.x",
+    "resourceful": "0.3.x"
   },
   "devDependencies": {
     "api-easy": "0.3.2",
@@ -15,7 +16,6 @@
     "test": "vows --spec",
     "start": "node app.js"
   },
-  "name": "registrator",
   "author": "Max F. Albrecht",
   "homepage": "weimarnetz.de"
 }
