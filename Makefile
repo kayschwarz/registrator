@@ -1,27 +1,29 @@
 # VARS. use to adjust paths, if necessary
 NODE = nodejs
-APP = app.js
+APP = app
 FOREVER = forever
 # forever conf: watch for changes. if it does not survive for 1s, wait 5s.
 FRVR_CFG = --watch --minUptime 1000 --spinSleepTime 5000
+
+GIT_HASH = $(shell git log -1 --pretty=format:"%H")
 
 # TASKS.
 default: run
 
 run: # run in terminal
-	${FOREVER} ${FRVR_CFG} ${APP}
+	${FOREVER} ${FRVR_CFG} ${APP}.js
 
 start: # run it in the background
-	${FOREVER} ${FRVR_CFG} start ${APP}
+	${FOREVER} ${FRVR_CFG} start ${APP}.js
 
 stop: # stop background app
-	${FOREVER} stop ${APP}
+	${FOREVER} stop ${APP}.js
 
 logs: # logs from backgound
-	${FOREVER} logs ${APP}
+	${FOREVER} logs ${APP}.js
 
 lint:
-	jslint --node --sloppy --white *.js
+	jslint --node --sloppy --white ${APP}.js *.js lib/*.js
 
 dependencies:
 	# system-wide deps. only installed if not found in $PATH.
@@ -32,14 +34,15 @@ dependencies:
 	# app deps (node_modules)
 	npm install
 
-npm-pack:
-	cd node_modules/ ; rm *.tgz ; npm pack *
-	cd node_modules/ ; git add *.tgz
-	@echo 'You should: $ git commit -m "updated node module packs"'
-
-npm-unpack:
-	cd node_modules/
-	echo "ask eins78 if he read more doku. something with 'npm cache'."
+docs:
+	# generate doccs with docco
+	@# !!! docco needs to be installed!
+	docco ${APP}.js lib/*.js
+	cp docs/${APP}.html docs/index.html
+	@# !!! gh-pages clone needs to be in /docs!
+	cd docs; git add --all
+	cd docs; git commit -m "docs based on ${GIT_HASH}" && git push origin gh-pages
+	
 	
 # shortcuts
 deps: dependencies
@@ -47,3 +50,5 @@ deps: dependencies
 s: start
 	
 l: logs
+
+.PHONY : docs
