@@ -6,9 +6,12 @@ FOREVER = forever
 FRVR_CFG = --watch --minUptime 1000 --spinSleepTime 5000
 
 # couchdb "secrets"
+#COUCH_USER = user
+#COUCH_PASS = xxxx
 
 # ENV
-ENV = export COUCH_USER=${COUCH_USER}; export COUCH_PASS=${COUCH_PASS}
+ENV = true # dont run it
+#ENV = export COUCH_USER=${COUCH_USER}; export COUCH_PASS=${COUCH_PASS}
 
 # TASKS.
 default: run
