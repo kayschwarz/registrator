@@ -1,6 +1,8 @@
 var flatiron  = require('flatiron'),
     path      = require('path'),
-    app       = flatiron.app;
+    util      = require('util'),
+    app       = flatiron.app,
+    mu        = require('mu2');
 
 // app: config
 app.config.file({ file: path.join(__dirname, 'config', 'config.json') });
@@ -18,7 +20,24 @@ app.use(require("./lib/register"));
 
 // ## HOMEPAGE
 app.router.get('/', function () {
-  this.res.json({ 'RTFM': 'https://github.com/eins78/registrator/' })
+  
+  var http      = this,
+      template  = 'index.mustache',
+      data      = {};
+  
+  app.register.getAll(null, function(err, res) {
+
+    data.network = app.config.get('networks')[1];
+    data.name = app.config.get('name');
+    data.knoten = res.result.knoten;
+
+    app.log.warn(JSON.stringify(data));
+  
+    stream = mu.compileAndRender(template, data);    
+    util.pump(stream, http.res);
+
+  });  
+  
 });
 
 // ## LIST: GET /knoten
