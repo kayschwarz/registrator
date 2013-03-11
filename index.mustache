@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{name}}> {{network.name}}</title>
+
+    <!-- generic webapp shit-->
+    <link href='//eins78.github.com/appstrakt/style.css' rel='stylesheet' type='text/css'>
+    
+  </head>
+  <body>
+    <style type="text/css">
+    .table tr {
+      font-family: 'Source Code Pro', sans-serif;
+    }
+    .table td {
+      font-weight: normal;
+    }
+    </style>
+    <article>
+      <header>
+        <h1>{{name}}</h1>
+      </header>
+
+      {{#network}}
+      {{#active}}
+      <p>
+        This is
+        {{#url}}
+          <a href="{{url}}"><kbd>{{name}}</kbd></a>. 
+        {{/url}}
+        {{^url}}
+            <kbd>{{name}}</kbd>. 
+        {{/url}}
+              
+        Numbers:  
+        <kbd>{{minimum}}..{{maximum}}</kbd>.
+
+        Lease: <kbd>
+              {{#lease_days}}{{lease_days}}</kbd> days.{{/lease_days}}
+              {{^lease_days}}unknown</kbd> time!{{/lease_days}}
+
+      </p>
+      {{/active}}
+      {{/network}}
+      
+      
+      <table class="table table-hover">
+        <tr>
+          <th>&#x2116; <span class="muted">(<a href="/list/numbers">list</a>)</span></th>
+          <th>MAC <span class="muted">(<a href="/list/macs">list</a>)</span></th>          
+          <th>last seen</th>          
+        </tr>
+        
+        {{#knoten}}
+        {{#last_seen}} {{! only show nodes with last seen}}
+        <tr>
+          <td>
+            <a href="/GET/knoten/{{number}}">{{number}}</a>
+          </td>
+          <td>
+            <a href="/GET/knoten/{{number}}">{{mac}}</a>
+          </td>
+          <td>
+            <a href="/GET/knoten/{{number}}">{{last_seen}}</a>
+          </td>   
+        </tr>
+        {{/last_seen}}
+        {{/knoten}}
+      </table>
+      
+    </article>
+    
+    <footer>
+      <small class="muted">
+        <kbd>{{name}}.js running on dev.</kbd>
+      </small>
+    </footer>
+    
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.min.js"></script>
+    
+  </body>
+</html>
