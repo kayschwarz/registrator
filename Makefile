@@ -5,20 +5,25 @@ FOREVER = forever
 # forever conf: watch for changes. if it does not survive for 1s, wait 5s.
 FRVR_CFG = --watch --minUptime 1000 --spinSleepTime 5000
 
+# couchdb "secrets"
+
+# ENV
+ENV = export COUCH_USER=${COUCH_USER}; export COUCH_PASS=${COUCH_PASS}
+
 # TASKS.
 default: run
 
 run: # run in terminal
-	${FOREVER} ${FRVR_CFG} ${APP}
+	@${ENV} && ${FOREVER} ${FRVR_CFG} ${APP}
 
 start: # run it in the background
-	${FOREVER} ${FRVR_CFG} start ${APP}
+	@${ENV} && ${FOREVER} ${FRVR_CFG} start ${APP}
 
 stop: # stop background app
-	${FOREVER} stop ${APP}
+	@${ENV} && ${FOREVER} stop ${APP}
 
 logs: # logs from backgound
-	${FOREVER} logs ${APP}
+	@${ENV} && ${FOREVER} logs ${APP}
 
 lint:
 	jslint --node --sloppy --white *.js
