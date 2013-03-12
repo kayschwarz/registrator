@@ -8,7 +8,7 @@
     
   </head>
   <body>
-    <style type="text/css">
+    <style type="text/css">    
     header, section, article, footer {
       min-width: 520px;
       max-width: 780px;
@@ -22,18 +22,16 @@
     .table tr, .table td {
       font-weight: normal;
     }
-    #network {
-      width: 62%;
-    }
     </style>
     
     <header>
-      <h1 class="muted"><i class="icon-list-ol"></i> {{name}}</h1>
+      <h1><i class="icon-list-ol"></i> {{name}}</h1>
     </header>
 
-    <section>
+    <section id="content">
       {{#network}}
       {{#active}}
+      
       <h3 class="lead">
         network: <kbd>{{name}}
           <small><a href="{{url}}" title="{{name}} Website">
@@ -41,7 +39,8 @@
           </a></small>
         </kbd>
       </h3>
-      <table id="network" class="table table-condensed table-bordered">
+      
+      <table id="network" class="table table-condensed table-bordered golden-big">
         <tr>
           <th>range</th>
           <th>lease days</th>
@@ -68,7 +67,7 @@
       {{/active}}
       {{/network}}
             
-      <table class="table table-hover">
+      <table id="knoten-listing" class="table table-hover">
         <tr>
           
           <th>&#x2116;</th>
@@ -79,25 +78,30 @@
         </tr>
         
         {{#knoten}}
-        {{#last_seen}} {{! only show nodes with last seen}}
-        <tr>
-          <td>
-            <a href="/GET/knoten/{{number}}">{{number}}</a>
+        <tr id="knoten-nr-{{number}}">
+          <td class="knoten-number">
+            <a href="/GET/knoten/{{number}}">
+              {{number}}
+            </a>
           </td>
-          <td>{{mac}}</td>
-          <td>{{created_at}}</td>   
-          <td>{{last_seen}}</td>   
+          <td class="knoten-mac">
+            {{mac}}
+          </td>
+          <td class="knoten-created_at">
+            {{created_at}}
+          </td>   
+          <td class="knoten-last_seen">
+           {{last_seen}}
+          </td>   
         </tr>
-        {{/last_seen}}
         {{/knoten}}
+
       </table>
       
     </section>
     
     <footer>
-      <small class="muted">
-        <kbd>{{name}}.js running on dev.</kbd>
-      </small>
+      <kbd>{{name}}.js running on dev.</kbd>
     </footer>
     
     <script src="http://code.jquery.com/jquery-latest.js"></script>
