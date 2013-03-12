@@ -139,3 +139,33 @@ app.router.get('/GET/time', getTime);
 
 // start http server on configured port
 app.start(app.config.get('port'));
+app.log.info("Server started!", { "port": app.config.get('port') })
+
+
+// Socket.io
+// 
+var io = require('socket.io').listen(app.server);
+
+io.sockets.on('connection', function(socket) {
+  
+  socket.emit('console', {
+    "event": 'HELLO',
+    "message": 'socket.io connected!'
+  });
+
+  app.resources.Knoten.on('update', function(doc) {
+      socket.emit('console', {
+        "event": "HEARTBEAT",
+        "message": doc.id
+      });
+  });  
+
+  app.resources.Knoten.on('save', function(doc) {
+      socket.emit('console', {
+        "event": "REGISTER",
+        "message": "UPD: "+ doc.id 
+      });
+  });  
+
+});
+
