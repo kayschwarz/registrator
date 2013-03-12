@@ -34,21 +34,20 @@
 
       {{#network}}
       {{#active}}
+      <h3 class="lead muted">
+        <kbd>{{name}}
+          <small><a href="{{url}}" title="{{name}} Website">
+            <i class="icon-external-link"></i>
+          </a></small>
+        </kbd>
+      </h3>
       <table id="network" class="table table-condensed table-bordered">
         <tr>
-          <th>network</th>
           <th>range</th>
           <th>lease days</th>
+          <th>listings</th>
         </tr>
         <tr>
-          <td>
-            <a href="{{url}}" title="{{name}} Website">
-              <kbd>{{name}}</kbd> 
-              <small class="muted">
-                  <i class="icon-external-link"></i>
-              </small>
-            </a>
-          </td>
           <td>
             <kbd>{{minimum}}..{{maximum}}</kbd> 
           </td>
@@ -56,6 +55,12 @@
             <kbd>
               {{#lease_days}}{{lease_days}}{{/lease_days}}
               {{^lease_days}}unknown!{{/lease_days}}
+            </kbd> 
+          </td>
+          <td>
+            <kbd>
+              <a href="/list/number" title="Numbers Listing">&#x2116;</a>, 
+              <a href="/list/mac" title="MAC Listing">MAC</a>
             </kbd> 
           </td>
         </tr>
@@ -66,10 +71,8 @@
       <table class="table table-hover">
         <tr>
           
-          <th>&#x2116; <span class="muted">(<a href="/list/numbers">list</a>)</span></th>
-          
-          <th>MAC <span class="muted">(<a href="/list/macs">list</a>)</span></th>
-          
+          <th>&#x2116;</th>
+          <th>MAC</th>
           <th>created at</th>
           <th>last seen</th>
           
@@ -81,15 +84,9 @@
           <td>
             <a href="/GET/knoten/{{number}}">{{number}}</a>
           </td>
-          <td>
-            <a href="/GET/knoten/{{number}}">{{mac}}</a>
-          </td>
-          <td>
-            <a href="/GET/knoten/{{number}}">{{created_at}}</a>
-          </td>   
-          <td>
-            <a href="/GET/knoten/{{number}}">{{last_seen}}</a>
-          </td>   
+          <td>{{mac}}</td>
+          <td>{{created_at}}</td>   
+          <td>{{last_seen}}</td>   
         </tr>
         {{/last_seen}}
         {{/knoten}}
