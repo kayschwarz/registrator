@@ -4,12 +4,12 @@
     <title>{{name}}> {{network.name}}</title>
 
     <!-- generic webapp shit-->
-    <link href='//eins78.github.com/appstrakt/style.css' rel='stylesheet' type='text/css'>
+    <link href='http://localhost:8000/style.css' rel='stylesheet' type='text/css'>
     
   </head>
   <body>
     <style type="text/css">
-    article, footer {
+    header, section, article, footer {
       min-width: 520px;
       max-width: 780px;
     }
@@ -27,15 +27,15 @@
     }
     </style>
     
-    <article>
-      <header>
-        <h1>{{name}}</h1>
-      </header>
+    <header>
+      <h1 class="muted"><i class="icon-list-ol"></i> {{name}}</h1>
+    </header>
 
+    <section>
       {{#network}}
       {{#active}}
-      <h3 class="lead muted">
-        <kbd>{{name}}
+      <h3 class="lead">
+        network: <kbd>{{name}}
           <small><a href="{{url}}" title="{{name}} Website">
             <i class="icon-external-link"></i>
           </a></small>
@@ -92,7 +92,7 @@
         {{/knoten}}
       </table>
       
-    </article>
+    </section>
     
     <footer>
       <small class="muted">
