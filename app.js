@@ -11,10 +11,16 @@ app.config.file('networks', { file: path.join(__dirname, 'config', 'networks.jso
 
 // app: `http`, plugins
 app.use(flatiron.plugins.http);
+// "use" the `static` plugin, configure it to serve all available files in `./static` under http root (`/`).
+// example: `./client/css/style.css` -> `http://app.url/css/style.css`
+app.use(flatiron.plugins.static, { dir: path.join(__dirname, 'client') });   
+
 
 // app: internal modules
 app.use(require("./lib/errors"));
+app.use(require("./lib/model"));
 app.use(require("./lib/register"));
+
 
 // # ROUTER
 
