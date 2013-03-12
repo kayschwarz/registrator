@@ -9,13 +9,24 @@
   </head>
   <body>
     <style type="text/css">
-    .table tr {
-      font-family: 'Source Code Pro', sans-serif;
+    article, footer {
+      min-width: 520px;
+      max-width: 780px;
+    }
+    .table {
+      font-size: 11pt;
     }
     .table td {
+      font-family: 'Source Code Pro', sans-serif;
+    }
+    .table tr, .table td {
       font-weight: normal;
     }
+    #network {
+      width: 62%;
+    }
     </style>
+    
     <article>
       <header>
         <h1>{{name}}</h1>
@@ -23,32 +34,45 @@
 
       {{#network}}
       {{#active}}
-      <p>
-        This is
-        {{#url}}
-          <a href="{{url}}"><kbd>{{name}}</kbd></a>. 
-        {{/url}}
-        {{^url}}
-            <kbd>{{name}}</kbd>. 
-        {{/url}}
-              
-        Numbers:  
-        <kbd>{{minimum}}..{{maximum}}</kbd>.
-
-        Lease: <kbd>
-              {{#lease_days}}{{lease_days}}</kbd> days.{{/lease_days}}
-              {{^lease_days}}unknown</kbd> time!{{/lease_days}}
-
-      </p>
+      <table id="network" class="table table-condensed table-bordered">
+        <tr>
+          <th>network</th>
+          <th>range</th>
+          <th>lease days</th>
+        </tr>
+        <tr>
+          <td>
+            <a href="{{url}}" title="{{name}} Website">
+              <kbd>{{name}}</kbd> 
+              <small class="muted">
+                  <i class="icon-external-link"></i>
+              </small>
+            </a>
+          </td>
+          <td>
+            <kbd>{{minimum}}..{{maximum}}</kbd> 
+          </td>
+          <td>
+            <kbd>
+              {{#lease_days}}{{lease_days}}{{/lease_days}}
+              {{^lease_days}}unknown!{{/lease_days}}
+            </kbd> 
+          </td>
+        </tr>
+      </table>
       {{/active}}
       {{/network}}
-      
-      
+            
       <table class="table table-hover">
         <tr>
+          
           <th>&#x2116; <span class="muted">(<a href="/list/numbers">list</a>)</span></th>
-          <th>MAC <span class="muted">(<a href="/list/macs">list</a>)</span></th>          
-          <th>last seen</th>          
+          
+          <th>MAC <span class="muted">(<a href="/list/macs">list</a>)</span></th>
+          
+          <th>created at</th>
+          <th>last seen</th>
+          
         </tr>
         
         {{#knoten}}
@@ -60,6 +84,9 @@
           <td>
             <a href="/GET/knoten/{{number}}">{{mac}}</a>
           </td>
+          <td>
+            <a href="/GET/knoten/{{number}}">{{created_at}}</a>
+          </td>   
           <td>
             <a href="/GET/knoten/{{number}}">{{last_seen}}</a>
           </td>   
