@@ -13,14 +13,26 @@
       min-width: 520px;
       max-width: 780px;
     }
-    .table {
+    .table, #console {
       font-size: 11pt;
     }
-    .table td {
+    .table td, #console {
       font-family: 'Source Code Pro', sans-serif;
     }
     .table tr, .table td {
       font-weight: normal;
+    }
+    #console {
+      text-align: left;
+      height: 113px;
+      overflow: scroll;
+    }
+    #console .event {
+    font-weight: bold;
+    }
+    .tooltip.in {
+    opacity: 1;
+    filter: none;
     }
     </style>
     
@@ -66,7 +78,23 @@
       </table>
       {{/active}}
       {{/network}}
+      
+      <hr>
+      
+      <h4>
+        Konsole
+        <!-- <button type="button" class="btn btn-link" data-toggle="collapse" data-target="#console-container">
+          <i class="icon icon-resize-small"></i>
+        </button> -->
+      </h4>
+      <div id="console-container">
+        <div id="console" class="well dark">
+      </div>
+      </div>
+      
+      <hr>
             
+      <h4>Knoten</h4>
       <table id="knoten-listing" class="table table-hover">
         <tr>
           
@@ -106,6 +134,53 @@
     
     <script src="http://code.jquery.com/jquery-latest.js"></script>
     <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.min.js"></script>
+    
+    <script src="/plates.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    
+    <script>
+      $(function(){
+        $('#console').tooltip({
+          selector: "span[data-toggle=tooltip]"
+        });
+        // $("body").tooltip();
+        // $('body').on('.tooltip.data-api');
+        console.log('tooltips!');
+      });
+    
+      var socket = io.connect('http://thirtyhundred.127.0.0.1.xip.io');
+      
+      socket.on('console', function (data) {
+        
+        var now = new Date();
+        data.timestamp = now.getTime();
+        data.timestampISO = now.toISOString();
+        console.log(data);
+        
+        // console updates
+        $(function() {
+
+          var html = '<p class="logentry"><span class="timestamp label label-info" data-toggle="tooltip" title=""></span> <span class="event"></span>: <span class="message"></span> </p>';
+          
+          var map = new Plates.Map();
+          
+          map.class('event').to('event');
+          map.class('message').to('message');
+          map.class('timestamp').to('timestamp');          
+          map.where('data-toggle').is('tooltip')
+            .use('timestampISO').as('title');
+          map.where('')
+
+          var output = Plates.bind(html, data, map);
+          console.log(output);
+          $('#console').prepend(output);
+          // $('#console').html();
+
+        });
+      
+      });
+      
+  </script>
     
   </body>
 </html>
