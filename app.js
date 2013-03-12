@@ -31,8 +31,8 @@ app.router.get('/', function () {
     data.name = app.config.get('name');
     data.knoten = res.result.knoten;
 
-    app.log.warn(JSON.stringify(data));
-  
+    data.knoten.sort(function(a,b){return b.last_seen - a.last_seen})
+      
     stream = mu.compileAndRender(template, data);    
     util.pump(stream, http.res);
 
