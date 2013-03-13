@@ -1,4 +1,5 @@
 var flatiron  = require('flatiron'),
+    fs        = require('fs'),
     path      = require('path'),
     util      = require('util'),
     app       = flatiron.app,
@@ -13,7 +14,10 @@ app.config.file('networks', { file: path.join(__dirname, 'config', 'networks.jso
 app.use(flatiron.plugins.http);
 // "use" the `static` plugin, configure it to serve all available files in `./static` under http root (`/`).
 // example: `./client/css/style.css` -> `http://app.url/css/style.css`
-app.use(flatiron.plugins.static, { dir: path.join(__dirname, 'client') });   
+app.use(flatiron.plugins.static, {
+  dir: path.join(__dirname, 'client'),
+  path: "static"
+});   
 
 
 // app: internal modules
@@ -23,28 +27,6 @@ app.use(require("./lib/register"));
 
 
 // # ROUTER
-
-// ## HOMEPAGE
-app.router.get('/', function () {
-  
-  var http      = this,
-      template  = 'index.mustache',
-      data      = {};
-  
-  app.register.getAll(null, function(err, res) {
-
-    data.network = app.config.get('networks')[1];
-    data.name = app.config.get('name');
-    data.knoten = res.result.knoten;
-
-    data.knoten.sort(function(a,b){return b.last_seen - a.last_seen})
-      
-    stream = mu.compileAndRender(template, data);    
-    util.pump(stream, http.res);
-
-  });  
-  
-});
 
 // ## LIST: GET /knoten
 var listAll = function (property) {
@@ -137,6 +119,51 @@ var getTime = function () {
 app.router.get('/time', getTime);
 app.router.get('/GET/time', getTime);
 
+// # Static files
+app.router.get("/static/:file", function (file) {
+  var http = this,
+      target;
+  
+  // serve module js from node_modules
+  if (file === "plates.js") {
+    target = path.join(__dirname, 'node_modules', 'plates', 'lib', 'plates.js');
+  } else {
+    target = path.join(__dirname, 'public', file);
+  }
+  
+  // read and send the target file
+  fs.readFile(target, function (err, data) {
+    if (err) {
+      http.res.writeHead(500);
+      return http.res.end('Error loading index.html');
+    }
+    http.res.writeHead(200);
+    http.res.end(data);
+  });
+});
+
+// ## HOMEPAGE
+app.router.get('/', function () {
+  
+  var http      = this,
+      template  = './client/index.mustache',
+      data      = {};
+  
+  app.register.getAll(null, function(err, res) {
+
+    data.network = app.config.get('networks')[1];
+    data.name = app.config.get('name');
+    data.knoten = res.result.knoten;
+
+    data.knoten.sort(function(a,b){return b.last_seen - a.last_seen})
+      
+    stream = mu.compileAndRender(template, data);    
+    util.pump(stream, http.res);
+
+  });  
+  
+});
+
 // start http server on configured port
 app.start(app.config.get('port'));
 app.log.info("Server started!", { "port": app.config.get('port') })
@@ -150,20 +177,26 @@ io.sockets.on('connection', function(socket) {
   
   socket.emit('console', {
     "event": 'HELLO',
-    "message": 'socket.io connected!'
+    "message": 'socket.io connected!',
+    "knoten": null,
+    "timestamp": (new Date().toJSON())
   });
 
   app.resources.Knoten.on('update', function(doc) {
       socket.emit('console', {
         "event": "HEARTBEAT",
-        "message": doc.id
+        "message": null,
+        "knoten": doc.id,
+        "timestamp": (new Date().toJSON())
       });
   });  
 
   app.resources.Knoten.on('save', function(doc) {
       socket.emit('console', {
         "event": "REGISTER",
-        "message": "UPD: "+ doc.id 
+        "message": null,
+        "knoten": doc.id,
+        "timestamp": (new Date().toJSON())
       });
   });  
 

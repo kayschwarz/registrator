@@ -5,36 +5,11 @@
 
     <!-- generic webapp shit-->
     <link href='http://localhost:8000/style.css' rel='stylesheet' type='text/css'>
+    <!-- registrator styles-->
+    <link href='/static/style.css' rel='stylesheet' type='text/css'>
     
   </head>
   <body>
-    <style type="text/css">    
-    header, section, article, footer {
-      min-width: 520px;
-      max-width: 780px;
-    }
-    .table, #console {
-      font-size: 11pt;
-    }
-    .table td, #console {
-      font-family: 'Source Code Pro', sans-serif;
-    }
-    .table tr, .table td {
-      font-weight: normal;
-    }
-    #console {
-      text-align: left;
-      height: 113px;
-      overflow: scroll;
-    }
-    #console .event {
-    font-weight: bold;
-    }
-    .tooltip.in {
-    opacity: 1;
-    filter: none;
-    }
-    </style>
     
     <header>
       <h1><i class="icon-list-ol"></i> {{name}}</h1>
@@ -47,7 +22,7 @@
       <h3 class="lead">
         network: <kbd>{{name}}
           <small><a href="{{url}}" title="{{name}} Website">
-            <i class="icon-external-link"></i>
+            <i class="icon-external-link">Link</i>
           </a></small>
         </kbd>
       </h3>
@@ -101,26 +76,26 @@
           <th>&#x2116;</th>
           <th>MAC</th>
           <th>created at</th>
-          <th>last seen <i class="icon-angle-down"></i></th>
+          <th>last seen <i class="icon-angle-down">&#x21A7;</i></th>
           
         </tr>
         
         {{#knoten}}
         <tr id="knoten-nr-{{number}}">
           <td class="knoten-number">
-            <a href="/GET/knoten/{{number}}">
+            <kbd><a href="/GET/knoten/{{number}}">
               {{number}}
-            </a>
+            </a></kbd>
           </td>
           <td class="knoten-mac">
-            {{mac}}
+            <kbd>{{mac}}</kbd>
           </td>
           <td class="knoten-created_at">
-            {{created_at}}
-          </td>   
+            <kbd>{{created_at}}</kbd> 
+          </td> 
           <td class="knoten-last_seen">
-           {{last_seen}}
-          </td>   
+           <kbd>{{last_seen}}</kbd> 
+          </td> 
         </tr>
         {{/knoten}}
 
@@ -135,52 +110,9 @@
     <script src="http://code.jquery.com/jquery-latest.js"></script>
     <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.min.js"></script>
     
-    <script src="/plates.js"></script>
     <script src="/socket.io/socket.io.js"></script>
-    
-    <script>
-      $(function(){
-        $('#console').tooltip({
-          selector: "span[data-toggle=tooltip]"
-        });
-        // $("body").tooltip();
-        // $('body').on('.tooltip.data-api');
-        console.log('tooltips!');
-      });
-    
-      var socket = io.connect('http://thirtyhundred.127.0.0.1.xip.io');
-      
-      socket.on('console', function (data) {
-        
-        var now = new Date();
-        data.timestamp = now.getTime();
-        data.timestampISO = now.toISOString();
-        console.log(data);
-        
-        // console updates
-        $(function() {
-
-          var html = '<p class="logentry"><span class="timestamp label label-info" data-toggle="tooltip" title=""></span> <span class="event"></span>: <span class="message"></span> </p>';
-          
-          var map = new Plates.Map();
-          
-          map.class('event').to('event');
-          map.class('message').to('message');
-          map.class('timestamp').to('timestamp');          
-          map.where('data-toggle').is('tooltip')
-            .use('timestampISO').as('title');
-          map.where('')
-
-          var output = Plates.bind(html, data, map);
-          console.log(output);
-          $('#console').prepend(output);
-          // $('#console').html();
-
-        });
-      
-      });
-      
-  </script>
+    <script src="/static/plates.js"></script>
+    <script src="/static/echtzeit.js"></script>
     
   </body>
 </html>
