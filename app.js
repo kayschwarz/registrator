@@ -114,3 +114,54 @@ app.router.get('/GET/time', getTime);
 
 // start http server on configured port
 app.start(app.config.get('port'));
+
+app.resources.Network.get('testnet', function(err, res) {
+  
+  if (err && err.status < 500) {
+    
+    app.log.error("find testnet", err);
+    
+    app.resources.Network.create({
+      id: 'testnet'
+    }, function(err, network){
+  
+      if (err) {
+        app.log.error("create testnet", err);
+      } else {
+
+        // Create a new knoten for network
+        //
+        network.createKnoten({ id: "178", mac: "ff1234567890" }, function(err, result){
+          console.log(result);
+
+        });
+      }
+    });
+  }  
+});
+  
+app.resources.Network.get('testnet', function(err, res) {
+  
+  if (err && err.status < 500) {
+    
+    app.log.error("find testnet", err);
+    
+    app.resources.Network.create({
+      id: 'testnet'
+    }, function(err, network){
+  
+      if (err) {
+        app.log.error("create testnet", err);
+      } else {
+
+        // Create a new knoten for network
+        //
+        network.createKnoten({ id: "178", mac: "ff1234567890" }, function(err, result){
+          console.log(result);
+
+        });
+      }
+    });
+  }  
+});
+  
