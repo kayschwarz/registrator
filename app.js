@@ -36,56 +36,106 @@ app.router.get('/', function () {
 // 
 // ## Get/List all `Knoten`
 // 
+var listAll = function (network, property) {
   
   var http = this,
       givenprops = [],
       properties = [];
   
-  givenprops.push(property);
-  ["properties", "property", "props", "prop"].forEach(function(key) {
-    givenprops = givenprops.concat(http.req.query[key]);
+  // ### `/$NETWORK/list/numbers`
+  // 
+  // if a property was given as **url resource**
+  if (!property) {
+    // add it to the list of given properties.
+    givenprops.push(property);    
+  };
+  
+  // ### support `/$NETWORK/list?prop=numbers&prop=mac`
+  // 
+  // for each of those *query parameters**, 
+  ["properties", "property", "props", "prop"].forEach(function(parameter) {
+    // also add it to the list if we got a **value** for it
+    givenprops = givenprops.concat(http.req.query[parameter]);
   });
   
+  // ### support `/$NETWORK/list?number=yes&mac=1`
+  // 
+  // for each of those *query parameters**, 
   ["number", "mac", "knoten"].forEach(function(prop) {
-    if (givenprops.indexOf(prop) !== -1 || givenprops.indexOf(prop + 's') !== -1) {
-      properties.push(prop);
-    }
+    
+    // FIXME: wtf? not needed?
+    // if (givenprops.indexOf(parameter) !== -1 || givenprops.indexOf(parameter + 's') !== -1) {
+      // properties.push(prop);
+    // }
+    
+    // if they are in the query (or their plural), 
     if (http.req.query[prop] || http.req.query[prop + 's']) {
+      
+      // and if the value is neither emty nor the string 'false', 
       if (http.req.query[prop] !== "false" || http.req.query[prop + 's'] !== "false") {
+        
+        // add the corresponding property to the list.
         properties.push(prop);        
       }
     }
   });
+  
+  // ### call register
+  // 
+  // call internal API, with the list properties we want (if we got some, otherwise it's empty)
+  // 
+  app.register.getAll(network, properties, function(err, res) {
     
-  app.register.getAll(properties, function(err, res) {
+    // and send the result of it as pretty JSON (or an error if there was one).
     http.res.end(JSON.stringify((err || res), null, 2));
   });
   
 };
 
-app.router.get('/knoten', listAll);
-app.router.get('/GET/knoten', listAll);
+// ### set up the routes calling `listAll()`
+// 
+// - `GET /$NETWORK/knoten`
+app.router.get('/:network/knoten', listAll);
+// - `GET /GET/$NETWORK/knoten`
+app.router.get('/GET/:network/knoten', listAll);
+// - `GET /$NETWORK/list?$PROPERTY=1`
+app.router.get('/:network/list', listAll);
+// - `GET /GET/$NETWORK/list?$PROPERTY=1`
+app.router.get('/GET/:network/list', listAll);
+// - `GET /$NETWORK/lists?$PROPERTY=1`
+app.router.get('/:network/lists', listAll);
+// - `GET /GET/$NETWORK/lists?$PROPERTY=1`
+app.router.get('/GET/:network/lists', listAll);
+// - `GET /$NETWORK/list/$PROPERTY`
+app.router.get('/:network/list/:property', listAll);
+// - `GET /GET/$NETWORK/list/$PROPERTY`
+app.router.get('/GET/:network/list/:property', listAll);
+// - `GET /$NETWORK/lists/$PROPERTY`
+app.router.get('/:network/lists/:property', listAll);
+// - `GET /GET/$NETWORK/lists/$PROPERTY`
+app.router.get('/GET/:network/lists/:property', listAll);
 
-app.router.get('/list/:property', listAll);
-app.router.get('/GET/list/:property', listAll);
-app.router.get('/lists/:property', listAll);
-app.router.get('/GET/lists/:property', listAll);
-
-var getKnoten = function (number) {
 // 
 // ## Get a `Knoten`
 // 
+var getKnoten = function (network, number) {
   var http = this;
   
-  app.register.get(number, function(err, res) {
+  // call the internal API, get a knoten by number
+  app.register.get(network, number, function(err, res) {
+    
+    // send the error or result as pretty JSON.
     http.res.end(JSON.stringify((err || res), null, 2));
   });
 };
 
-app.router.get('/knoten/:number', getKnoten);
-app.router.get('/GET/knoten/:number', getKnoten);
+// ### set up the routes calling `getKnoten()`
+// 
+// - `GET /$NETWORK/knoten/$NUMBER`
+app.router.get('/:network/knoten/:number', getKnoten);
+// - `GET /GET/$NETWORK/knoten/$NUMBER`
+app.router.get('/GET/:network/knoten/:number', getKnoten);
 
-var postKnoten = function () {
 // 
 // ## AUTOREGISTER: POST a `Knoten`
 // 
@@ -94,21 +144,31 @@ var postKnoten = function () {
 // - new number is the smallest available, where 
 //   available means no db entry for this number
 // 
+var postKnoten = function (network) {
   var http = this, 
   
+  // read the request query parameters
   mac = http.req.query.mac || null,
   pass = http.req.query.pass || null;
   
-  app.register.create(mac, pass, function(err, res) {
+  // TODO: read JSON from request body
+  
+  // call the internal API, 
+  app.register.create(network, mac, pass, function(err, res) {
+    
+    // send the error or result as pretty JSON.
     http.res.end(JSON.stringify((err || res), null, 2));
   });
   
 };
 
-app.router.post('/knoten', postKnoten);
-app.router.get('/POST/knoten', postKnoten);
+// ### set up the routes calling `postKnoten()`
+// 
+// - `POST /$NETWORK/knoten/$NUMBER?mac=$MAC&pass=$PASS`
+app.router.post('/:network/knoten', postKnoten);
+// - `GET /POST/$NETWORK/knoten/$NUMBER?mac=$MAC&pass=$PASS`
+app.router.get('/POST/:network/knoten', postKnoten);
 
-var putKnoten = function (number) {
 // 
 // ## HEARTBEAT: PUT a `Knoten`
 // 
@@ -117,20 +177,31 @@ var putKnoten = function (number) {
 // - allows to capture a 'reserved' number
 // - logic: if given number has no pass, set it to given pass
 // 
+var putKnoten = function (network, number) {
   var http = this,
   
+  // read the request query parameters
   mac = http.req.query.mac || null,
   pass = http.req.query.pass || null;
   number = number || null;
   
-  app.register.update(number, mac, pass, function(err, res) {
+  // TODO: read JSON from request body
+  
+  // call the internal API, 
+  app.register.update(network, number, mac, pass, function(err, res) {
+    
+    // send the error or result as pretty JSON.
     http.res.end(JSON.stringify((err || res), null, 2));
   });
   
 };
 
-app.router.put('/knoten/:number', putKnoten);
-app.router.get('/PUT/knoten/:number', putKnoten);
+// ### set up the routes calling `putKnoten()`
+// 
+// - `PUT /$NETWORK/knoten/$NUMBER?mac=$MAC&pass=$PASS`
+app.router.put('/:network/knoten/:number', putKnoten);
+// - `GET /PUT/$NETWORK/knoten/$NUMBER?mac=$MAC&pass=$PASS`
+app.router.get('/PUT/:network/knoten/:number', putKnoten);
 
 // 
 // ## TIMESTAMP
@@ -218,9 +289,7 @@ app.start(app.config.get('port'));
   // Run async setup for each of the networks 
   // and run the self check after all of them completed.
   async.each(networks, bootstrap, function(err) {
-    
-    app.log.warn("async finished");
-    
+        
     if (err) {
       app.log.error("DB Bootstrap failed!");
     }
