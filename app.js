@@ -1,5 +1,6 @@
 var flatiron  = require('flatiron'),
     path      = require('path'),
+    async     = require('async'),
     app       = flatiron.app;
 
 // app: config
@@ -13,11 +14,22 @@ app.use(flatiron.plugins.http);
 // app: internal modules
 app.use(require("./lib/errors"));
 app.use(require("./lib/register"));
+app.use(require("./lib/model"), app.config.get('networks'));
 
-// # ROUTER
+// 
+// # EXTERNAL API
+// 
+// Functions calling the internal API and their HTTP routes 
+// (would have to be decoupled when supporting more interfaces).
+// 
+// Since routes except /home and /time need a `network` parameter, it is not further mentioned.
 
-// ## HOMEPAGE
+// 
+// ## HOMEPAGE: List all `networks`
+// 
+// - `GET /`
 app.router.get('/', function () {
+  // TODO: list networks
   this.res.json({ 'RTFM': 'https://github.com/eins78/registrator/' })
 });
 
@@ -112,56 +124,109 @@ var getTime = function () {
 app.router.get('/time', getTime);
 app.router.get('/GET/time', getTime);
 
-// start http server on configured port
+
+// 
+// # STARTUP
+// 
+// - start app and http server on configured port
+// 
 app.start(app.config.get('port'));
 
-app.resources.Network.get('testnet', function(err, res) {
-  
-  if (err && err.status < 500) {
-    
-    app.log.error("find testnet", err);
-    
-    app.resources.Network.create({
-      id: 'testnet'
-    }, function(err, network){
-  
-      if (err) {
-        app.log.error("create testnet", err);
-      } else {
+// 
+// ## Check Database, Check and Setup Networks
+//
+(function bootstrapDB () {
 
-        // Create a new knoten for network
-        //
-        network.createKnoten({ id: "178", mac: "ff1234567890" }, function(err, result){
-          console.log(result);
+  // - make tmp arrays
+  var networks = app.config.get('networks'),
+      configuredNetworks = [],
+      databasedNetworks = [];
 
-        });
+  // bootstrap() sets up network in db if it does not exist
+  var bootstrap = function (network, callback) {
+        
+    // add network to the tmp array
+    configuredNetworks.push(network.name);
+  
+    // check if it already exists in db.
+    app.resources.Network.get(network.name, function(err, res) {
+    
+      // If we got an error db error, we exit!
+      if (err && err.status > 500) {
+        throw new Error("DB error! Cannot run!")
       }
-    });
-  }  
-});
-  
-app.resources.Network.get('testnet', function(err, res) {
-  
-  if (err && err.status < 500) {
     
-    app.log.error("find testnet", err);
-    
-    app.resources.Network.create({
-      id: 'testnet'
-    }, function(err, network){
+      // If the network is not found, we create it.
+      else if (err && err.status === 404) {
+      
+        app.resources.Network.create({
+          id: network.name
+        }, function(err, network){
   
-      if (err) {
-        app.log.error("create testnet", err);
-      } else {
-
-        // Create a new knoten for network
-        //
-        network.createKnoten({ id: "178", mac: "ff1234567890" }, function(err, result){
-          console.log(result);
-
+          if (err) {
+          
+            var msg = "could not create network" + network.name;
+            
+            app.log.error(msg, err);
+            callback(new Error(msg));
+            
+          } else {
+          
+            app.log.debug("created network!", network);
+            callback();
+          }
+        
         });
+      
       }
+      
+      // if we found the network and the id is correct
+      else if (!err && res.id === network.name) {
+        // just callback
+        callback();
+
+      } else {
+        // something is very wrong
+        callback(new Error("Network" + res.id + " is not " +  network.name + "!"))
+      }
+    
     });
-  }  
-});
   
+  };  
+  
+  // Run async setup for each of the networks 
+  // and run the self check after all of them completed.
+  async.each(networks, bootstrap, function(err) {
+    
+    app.log.warn("async finished");
+    
+    if (err) {
+      app.log.error("DB Bootstrap failed!");
+    }
+    
+    Network.all(function(err, networksInDB) {
+    
+      // and for each network
+      networksInDB.forEach(function(n) {
+      
+        // add it to the tmp list.
+        console.log(n.id)
+        databasedNetworks.push(n.id);
+      });
+
+      // debug: log configured and actual networks
+      app.log.debug(" networks configured:", configuredNetworks.sort().toString());
+      app.log.debug("networks in database:", databasedNetworks.sort().toString());
+    
+      // exit if they are not the same!
+      if ( configuredNetworks.sort().toString() !== databasedNetworks.sort().toString() ) {
+        app.log.error("Self-check: Networks are broken! :(");
+      } else {
+        app.log.info("self-check:", {'networks_ok': true})
+      }
+  
+    });
+    
+  });
+  
+})();
