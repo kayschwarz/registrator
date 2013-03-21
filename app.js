@@ -33,8 +33,9 @@ app.router.get('/', function () {
   this.res.json({ 'RTFM': 'https://github.com/eins78/registrator/' })
 });
 
-// ## LIST: GET /knoten
-var listAll = function (property) {
+// 
+// ## Get/List all `Knoten`
+// 
   
   var http = this,
       givenprops = [],
@@ -70,8 +71,10 @@ app.router.get('/GET/list/:property', listAll);
 app.router.get('/lists/:property', listAll);
 app.router.get('/GET/lists/:property', listAll);
 
-// ## CHECK/INFO: GET /knoten/number
 var getKnoten = function (number) {
+// 
+// ## Get a `Knoten`
+// 
   var http = this;
   
   app.register.get(number, function(err, res) {
@@ -82,8 +85,15 @@ var getKnoten = function (number) {
 app.router.get('/knoten/:number', getKnoten);
 app.router.get('/GET/knoten/:number', getKnoten);
 
-// ## AUTOREGISTER: POST knoten, needs mac and pass
 var postKnoten = function () {
+// 
+// ## AUTOREGISTER: POST a `Knoten`
+// 
+// - needs mac and pass
+// - return a result with a `Knoten`
+// - new number is the smallest available, where 
+//   available means no db entry for this number
+// 
   var http = this, 
   
   mac = http.req.query.mac || null,
@@ -98,9 +108,15 @@ var postKnoten = function () {
 app.router.post('/knoten', postKnoten);
 app.router.get('/POST/knoten', postKnoten);
 
-// ## HEARTBEAT: PUT knoten/number, needs mac and pass
-// - special: if number has no pass, set to given pass
 var putKnoten = function (number) {
+// 
+// ## HEARTBEAT: PUT a `Knoten`
+// 
+// - needs mac and pass
+// - allow 'costum registration'
+// - allows to capture a 'reserved' number
+// - logic: if given number has no pass, set it to given pass
+// 
   var http = this,
   
   mac = http.req.query.mac || null,
@@ -116,8 +132,13 @@ var putKnoten = function (number) {
 app.router.put('/knoten/:number', putKnoten);
 app.router.get('/PUT/knoten/:number', putKnoten);
 
-// ## TIMESTAMP: GET /time
+// 
+// ## TIMESTAMP
+// 
+// - `GET /time`
 var getTime = function () {
+  
+  // send the current timestamp as pretty JSON.
   this.res.end(JSON.stringify({ 'now': new Date().getTime() }, null, 2));
 };
 
