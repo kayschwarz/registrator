@@ -1,379 +1,1575 @@
-<!DOCTYPE html>  <html> <head>   <title>register.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="app.html">                 app.js               </a>                                           <a class="source" href="common.html">                 common.js               </a>                                           <a class="source" href="errors.html">                 errors.js               </a>                                           <a class="source" href="model.html">                 model.js               </a>                                           <a class="source" href="register.html">                 register.js               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               register.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">tool</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./common&#39;</span><span class="p">).</span><span class="nx">tool</span><span class="p">,</span>
-    <span class="nx">Knoten</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./model&#39;</span><span class="p">).</span><span class="nx">resources</span><span class="p">.</span><span class="nx">Knoten</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p><code>exports.attach</code> gets called by broadway on <code>app.use</code></p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">exports</span><span class="p">.</span><span class="nx">attach</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-  </pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>this is our app</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
-      <span class="nx">lists</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;knoten&quot;</span><span class="p">,</span> <span class="s2">&quot;number&quot;</span><span class="p">,</span> <span class="s2">&quot;mac&quot;</span><span class="p">],</span>
-      <span class="nx">whitelist</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;number&quot;</span><span class="p">,</span> <span class="s2">&quot;mac&quot;</span><span class="p">,</span> <span class="s2">&quot;created_at&quot;</span><span class="p">,</span> <span class="s2">&quot;last_seen&quot;</span><span class="p">];</span>
-  </pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <h1>FUNCTIONS</h1>             </td>             <td class="code">               <div class="highlight"><pre>  
-  <span class="kd">var</span> <span class="nx">getfirstFreeNumber</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>register.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
     
-    <span class="nx">app</span><span class="p">.</span><span class="nx">log</span><span class="p">.</span><span class="nx">debug</span><span class="p">(</span><span class="s2">&quot;getfirstFreeNumber()&quot;</span><span class="p">);</span>
-    
-    <span class="kd">var</span> <span class="nx">freeNumber</span><span class="p">,</span> <span class="nx">tryNumber</span><span class="p">,</span> <span class="nx">now</span><span class="p">;</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>initialize search</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">freeNumber</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-    <span class="nx">tryNumber</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
-    <span class="nx">now</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">();</span>    
-    </pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>get network database
-pro tip: do this with reasonable low caching in respect to leases timing out</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">Knoten</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
-      
-      <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>fail in case of db error</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">app</span><span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="nx">e</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
-        <span class="k">return</span><span class="p">;</span>
-      <span class="p">}</span>
-      </pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>prepare the result :)</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="kd">var</span> <span class="nx">register</span> <span class="o">=</span> <span class="p">{};</span>
-      <span class="nx">res</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">knoten</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">register</span><span class="p">[</span><span class="nx">knoten</span><span class="p">.</span><span class="nx">number</span><span class="p">]</span> <span class="o">=</span> <span class="nx">knoten</span><span class="p">;</span>
-      <span class="p">});</span>
-      <span class="nx">app</span><span class="p">.</span><span class="nx">log</span><span class="p">.</span><span class="nx">debug</span><span class="p">(</span><span class="s2">&quot;register:&quot;</span><span class="p">,</span> <span class="nx">register</span><span class="p">);</span>
-      </pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>check incrementing number till usable found
-free === not in db; or with lease timed out</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">checkNumber</span><span class="o">:</span> <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="nx">freeNumber</span> <span class="o">||</span> <span class="nx">tryNumber</span> <span class="o">&lt;</span> <span class="mi">255</span> <span class="p">)</span> <span class="p">{</span>
-        </pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <p>check if the number exists</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">register</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">tryNumber</span><span class="p">))</span> <span class="p">{</span>
-          </pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <p>check if the lease timed out</p>             </td>             <td class="code">               <div class="highlight"><pre>          </pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-12">&#182;</a>               </div>               <p>current lease time in days</p>             </td>             <td class="code">               <div class="highlight"><pre>          <span class="kd">var</span> <span class="nx">leasedays</span> <span class="o">=</span> <span class="p">((</span><span class="nx">now</span> <span class="o">-</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="nx">register</span><span class="p">[</span><span class="nx">tryNumber</span><span class="p">][</span><span class="s2">&quot;last_seen&quot;</span><span class="p">]))</span><span class="o">/</span><span class="mi">1000</span><span class="o">/</span><span class="mi">60</span><span class="o">/</span><span class="mi">60</span><span class="o">/</span><span class="mi">24</span><span class="p">)</span>
-                    
-          <span class="k">if</span> <span class="p">(</span><span class="nx">leasedays</span> <span class="o">&gt;</span> <span class="mi">30</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-13">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-13">&#182;</a>               </div>               <p>if lease timed out, we have our number!</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="nx">app</span><span class="p">.</span><span class="nx">log</span><span class="p">.</span><span class="nx">debug</span><span class="p">(</span><span class="s2">&quot;found number because lease timed out&quot;</span><span class="p">,</span> <span class="nx">trynumber</span><span class="p">,</span> <span class="nx">leasedays</span><span class="p">);</span>
-            <span class="nx">freeNumber</span> <span class="o">=</span> <span class="nx">tryNumber</span><span class="p">;</span>
-            <span class="k">break</span> <span class="nx">checkNumber</span><span class="p">;</span>
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
             
-          <span class="p">}</span>
-          
-        <span class="p">}</span>
+              
+              <a class="source" href="app.html">
+                app.js
+              </a>
+            
+              
+              <a class="source" href="common.html">
+                common.js
+              </a>
+            
+              
+              <a class="source" href="errors.html">
+                errors.js
+              </a>
+            
+              
+              <a class="source" href="model.html">
+                model.js
+              </a>
+            
+              
+              <a class="source" href="register.html">
+                register.js
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
         
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">register</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">tryNumber</span><span class="p">))</span> <span class="p">{</span>
+          <li id="title">
+              <div class="annotation">
+                  <h1>register.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="keyword">var</span> tool = require(<span class="string">'./common'</span>).tool,
+    Knoten = require(<span class="string">'./model'</span>).resources.Knoten;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p><code>exports.attach</code> gets called by broadway on <code>app.use</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>exports.attach = <span class="function"><span class="keyword">function</span> <span class="params">(options)</span> {</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>this is our app</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">var</span> app = <span class="keyword">this</span>,
+      lists = [<span class="string">"knoten"</span>, <span class="string">"number"</span>, <span class="string">"mac"</span>],
+      whitelist = [<span class="string">"number"</span>, <span class="string">"mac"</span>, <span class="string">"created_at"</span>, <span class="string">"last_seen"</span>];</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <h1>FUNCTIONS</h1>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  
+  <span class="keyword">var</span> getfirstFreeNumber = <span class="keyword">function</span>(callback) {
+    
+    app.log.debug(<span class="string">"getfirstFreeNumber()"</span>);
+    
+    <span class="keyword">var</span> freeNumber, tryNumber, now;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>initialize search</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    freeNumber = <span class="literal">null</span>;
+    tryNumber = <span class="number">2</span>;
+    now = <span class="keyword">new</span> Date();</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>get network database
+pro tip: do this with reasonable low caching in respect to leases timing out</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    Knoten.all(<span class="keyword">function</span>(err, res) {
+      
+      <span class="keyword">if</span> (err) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>fail in case of db error</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        app.fail(<span class="number">500</span>, e, callback);
+        <span class="keyword">return</span>;
+      }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>prepare the result :)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="keyword">var</span> register = {};
+      res.forEach(<span class="keyword">function</span>(knoten) {
+        register[knoten.number] = knoten;
+      });
+      app.log.debug(<span class="string">"register:"</span>, register);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>check incrementing number till usable found
+free === not in db; or with lease timed out</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      checkNumber: <span class="keyword">while</span> (!freeNumber || tryNumber &lt; <span class="number">255</span> ) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>check if the number exists</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="keyword">if</span> (register.hasOwnProperty(tryNumber)) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>check if the lease timed out</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p>current lease time in days</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          <span class="keyword">var</span> leasedays = ((now - <span class="keyword">new</span> Date(register[tryNumber][<span class="string">"last_seen"</span>]))/<span class="number">1000</span>/<span class="number">60</span>/<span class="number">60</span>/<span class="number">24</span>)
+                    
+          <span class="keyword">if</span> (leasedays &gt; <span class="number">30</span>) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>if lease timed out, we have our number!</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            app.log.debug(<span class="string">"found number because lease timed out"</span>, trynumber, leasedays);
+            freeNumber = tryNumber;
+            <span class="keyword">break</span> checkNumber;
+            
+          }
           
-          <span class="nx">freeNumber</span> <span class="o">=</span> <span class="nx">tryNumber</span><span class="p">;</span>
-          <span class="k">break</span> <span class="nx">checkNumber</span><span class="p">;</span>
+        }
+        
+        <span class="keyword">if</span> (!register.hasOwnProperty(tryNumber)) {
+          
+          freeNumber = tryNumber;
+          <span class="keyword">break</span> checkNumber;
            
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        } <span class="keyword">else</span> {
           
-          <span class="nx">tryNumber</span> <span class="o">=</span> <span class="nx">tryNumber</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+          tryNumber = tryNumber + <span class="number">1</span>;
           
-        <span class="p">}</span>
+        }
         
-      <span class="p">}</span>
-      </pre></div>             </td>           </tr>                               <tr id="section-14">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-14">&#182;</a>               </div>               <p>if we got finished the loop without finding a number,
-we give up :(</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">freeNumber</span><span class="p">)</span> <span class="p">{</span>
-        </pre></div>             </td>           </tr>                               <tr id="section-15">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-15">&#182;</a>               </div>               <p>TODO: give correct error</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">callback</span><span class="p">(</span><span class="s2">&quot;ERROR!&quot;</span><span class="p">,</span> <span class="kc">null</span><span class="p">);</span>
-        
-      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        </pre></div>             </td>           </tr>                               <tr id="section-16">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-16">&#182;</a>               </div>               <p>yay, we callback with the fresh number</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">callback</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">freeNumber</span><span class="p">);</span>
-      <span class="p">}</span>
-              
-    <span class="p">});</span>
-      
-  <span class="p">},</span>
-        
-  <span class="nx">createKnoten</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">leknoten</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-17">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-17">&#182;</a>               </div>               <p>this always get called with given:
-(fresh) number, pass, maybe mac </p>             </td>             <td class="code">               <div class="highlight"><pre>           </pre></div>             </td>           </tr>                               <tr id="section-18">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-18">&#182;</a>               </div>               <p>also, all prechecks are already done!
-if we reach this point, we are creating a new number (also means the mac is not already known).</p>             </td>             <td class="code">               <div class="highlight"><pre>    </pre></div>             </td>           </tr>                               <tr id="section-19">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-19">&#182;</a>               </div>               <p>we use the number as our id</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">leknoten</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">leknoten</span><span class="p">.</span><span class="nx">number</span><span class="p">;</span>
-    <span class="k">delete</span> <span class="nx">leknoten</span><span class="p">.</span><span class="nx">number</span><span class="p">;</span>
-        
-    <span class="nx">app</span><span class="p">.</span><span class="nx">log</span><span class="p">.</span><span class="nx">debug</span><span class="p">(</span><span class="s1">&#39;REG: Create Knoten!&#39;</span><span class="p">,</span> <span class="nx">leknoten</span><span class="p">);</span>
-          
-    <span class="nx">Knoten</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">leknoten</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
-            </pre></div>             </td>           </tr>                               <tr id="section-20">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-20">&#182;</a>               </div>               <p>we get the result back from the db</p>             </td>             <td class="code">               <div class="highlight"><pre>        
-      <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
-          </pre></div>             </td>           </tr>                               <tr id="section-21">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-21">&#182;</a>               </div>               <p>db error at this stage is our fault</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">app</span><span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="nx">err</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
-        <span class="k">return</span><span class="p">;</span>
-          
-      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-              </pre></div>             </td>           </tr>                               <tr id="section-22">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-22">&#182;</a>               </div>               <p>build answer</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">{</span>
-          <span class="s2">&quot;status&quot;</span><span class="o">:</span> <span class="mi">201</span><span class="p">,</span>
-          <span class="s2">&quot;message&quot;</span><span class="o">:</span> <span class="s2">&quot;Created!&quot;</span><span class="p">,</span>
-          <span class="s2">&quot;result&quot;</span><span class="o">:</span> <span class="p">{</span>
-            <span class="s2">&quot;number&quot;</span><span class="o">:</span> <span class="nx">result</span><span class="p">.</span><span class="nx">number</span><span class="p">,</span>
-            <span class="s2">&quot;mac&quot;</span><span class="o">:</span> <span class="nx">result</span><span class="p">.</span><span class="nx">mac</span> <span class="o">||</span> <span class="kc">null</span><span class="p">,</span>
-            <span class="s2">&quot;last_seen&quot;</span><span class="o">:</span> <span class="nx">result</span><span class="p">[</span><span class="s2">&quot;last_seen&quot;</span><span class="p">]</span>
-          <span class="p">}</span>
-        <span class="p">};</span>
-              </pre></div>             </td>           </tr>                               <tr id="section-23">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-23">&#182;</a>               </div>               <p>success!</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">app</span><span class="p">.</span><span class="nx">log</span><span class="p">.</span><span class="nx">debug</span><span class="p">(</span><span class="s2">&quot;REG: Success!&quot;</span><span class="p">,</span> <span class="nx">a</span><span class="p">);</span>
-        <span class="nx">callback</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">a</span><span class="p">);</span>
-              
-      <span class="p">}</span>
+      }</pre></div></div>
             
-    <span class="p">});</span>
-    
-  <span class="p">},</span>
-
-  <span class="nx">updateKnoten</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">leknoten</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-24">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-24">&#182;</a>               </div>               <p>this always get called with given:
-registered number, pass, maybe mac </p>             </td>             <td class="code">               <div class="highlight"><pre>           </pre></div>             </td>           </tr>                               <tr id="section-25">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-25">&#182;</a>               </div>               <p>also, all prechecks are already done!
-if we reach this point, we are updating a registered number (also means pass was checked).</p>             </td>             <td class="code">               <div class="highlight"><pre>    
-              
-    <span class="nx">app</span><span class="p">.</span><span class="nx">log</span><span class="p">.</span><span class="nx">debug</span><span class="p">(</span><span class="s2">&quot;REG: Update Knoten:&quot;</span><span class="p">,</span> <span class="nx">leknoten</span><span class="p">);</span>
-    
-    <span class="nx">Knoten</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">leknoten</span><span class="p">.</span><span class="nx">number</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">knoten</span><span class="p">)</span> <span class="p">{</span>
-      
-      <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
-        </pre></div>             </td>           </tr>                               <tr id="section-26">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-26">&#182;</a>               </div>               <p>db error at this stage is our fault</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">app</span><span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">err</span><span class="p">),</span> <span class="nx">callback</span><span class="p">);</span>
-        <span class="k">return</span><span class="p">;</span>
+        </li>
         
-      <span class="p">}</span> 
-      <span class="k">else</span> <span class="p">{</span>
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>if we got finished the loop without finding a number,
+we give up :(</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="keyword">if</span> (!freeNumber) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>TODO: give correct error</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        callback(<span class="string">"ERROR!"</span>, <span class="literal">null</span>);
+        
+      } <span class="keyword">else</span> {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>yay, we callback with the fresh number</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        callback(<span class="literal">null</span>, freeNumber);
+      }
+              
+    });
+      
+  },
+        
+  createKnoten = <span class="function"><span class="keyword">function</span> <span class="params">(leknoten, callback)</span> {</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>this always get called with given:
+(fresh) number, pass, maybe mac </p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p>also, all prechecks are already done!
+if we reach this point, we are creating a new number (also means the mac is not already known).</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <p>we use the number as our id</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    leknoten.id = leknoten.number;
+    <span class="keyword">delete</span> leknoten.number;
+        
+    app.log.debug(<span class="string">'REG: Create Knoten!'</span>, leknoten);
+          
+    Knoten.create(leknoten, <span class="keyword">function</span>(err, result) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p>we get the result back from the db</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        
+      <span class="keyword">if</span> (err) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <p>db error at this stage is our fault</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        app.fail(<span class="number">500</span>, err, callback);
+        <span class="keyword">return</span>;
+          
+      } <span class="keyword">else</span> {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p>build answer</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="keyword">var</span> a = {
+          <span class="string">"status"</span>: <span class="number">201</span>,
+          <span class="string">"message"</span>: <span class="string">"Created!"</span>,
+          <span class="string">"result"</span>: {
+            <span class="string">"number"</span>: result.number,
+            <span class="string">"mac"</span>: result.mac || <span class="literal">null</span>,
+            <span class="string">"last_seen"</span>: result[<span class="string">"last_seen"</span>]
+          }
+        };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p>success!</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        app.log.debug(<span class="string">"REG: Success!"</span>, a);
+        callback(<span class="literal">null</span>, a);
+              
+      }
+            
+    });
+    
+  },
+
+  updateKnoten = <span class="function"><span class="keyword">function</span> <span class="params">(leknoten, callback)</span> {</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <p>this always get called with given:
+registered number, pass, maybe mac </p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <p>also, all prechecks are already done!
+if we reach this point, we are updating a registered number (also means pass was checked).</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    
+              
+    app.log.debug(<span class="string">"REG: Update Knoten:"</span>, leknoten);
+    
+    Knoten.get(leknoten.number, <span class="function"><span class="keyword">function</span> <span class="params">(err, knoten)</span> {</span>
+      
+      <span class="keyword">if</span> (err) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <p>db error at this stage is our fault</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        app.fail(<span class="number">500</span>, JSON.stringify(err), callback);
+        <span class="keyword">return</span>;
+        
+      } 
+      <span class="keyword">else</span> {
                   
-        <span class="nx">knoten</span><span class="p">.</span><span class="nx">update</span><span class="p">(</span><span class="nx">leknoten</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
-            </pre></div>             </td>           </tr>                               <tr id="section-27">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-27">&#182;</a>               </div>               <p>we get the result back from the db</p>             </td>             <td class="code">               <div class="highlight"><pre>        
-          <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
-          </pre></div>             </td>           </tr>                               <tr id="section-28">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-28">&#182;</a>               </div>               <p>db error at this stage is our fault</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="nx">app</span><span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">err</span><span class="p">),</span> <span class="nx">callback</span><span class="p">);</span>
-            <span class="k">return</span><span class="p">;</span>
-          
-          <span class="p">}</span> 
-          <span class="k">else</span> <span class="p">{</span>
-              </pre></div>             </td>           </tr>                               <tr id="section-29">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-29">&#182;</a>               </div>               <p>build answer</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">{</span>
-              <span class="s2">&quot;status&quot;</span><span class="o">:</span> <span class="mi">200</span><span class="p">,</span>
-              <span class="s2">&quot;msg&quot;</span><span class="o">:</span> <span class="s2">&quot;ok&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;result&quot;</span><span class="o">:</span> <span class="p">{</span>
-                <span class="s2">&quot;number&quot;</span><span class="o">:</span> <span class="nx">result</span><span class="p">.</span><span class="nx">number</span><span class="p">,</span>
-                <span class="s2">&quot;mac&quot;</span><span class="o">:</span> <span class="nx">result</span><span class="p">.</span><span class="nx">mac</span><span class="p">,</span>
-                <span class="s2">&quot;created_at&quot;</span><span class="o">:</span> <span class="nx">result</span><span class="p">.</span><span class="nx">created_at</span><span class="p">,</span>
-                <span class="s2">&quot;last_seen&quot;</span><span class="o">:</span> <span class="nx">result</span><span class="p">.</span><span class="nx">last_seen</span>
-              <span class="p">}</span>
-            <span class="p">};</span>
-              </pre></div>             </td>           </tr>                               <tr id="section-30">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-30">&#182;</a>               </div>               <p>success!</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="nx">app</span><span class="p">.</span><span class="nx">log</span><span class="p">.</span><span class="nx">debug</span><span class="p">(</span><span class="s2">&quot;REG: Success!&quot;</span><span class="p">,</span> <span class="nx">a</span><span class="p">);</span>
-            <span class="nx">callback</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">a</span><span class="p">);</span>
+        knoten.update(leknoten, <span class="keyword">function</span>(err, result) {</pre></div></div>
             
-          <span class="p">}</span>
-            
-        <span class="p">});</span>
+        </li>
         
-      <span class="p">}</span>
+        
+        <li id="section-27">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-27">&#182;</a>
+              </div>
+              <p>we get the result back from the db</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        
+          <span class="keyword">if</span> (err) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-28">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-28">&#182;</a>
+              </div>
+              <p>db error at this stage is our fault</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            app.fail(<span class="number">500</span>, JSON.stringify(err), callback);
+            <span class="keyword">return</span>;
+          
+          } 
+          <span class="keyword">else</span> {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-29">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-29">&#182;</a>
+              </div>
+              <p>build answer</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            <span class="keyword">var</span> a = {
+              <span class="string">"status"</span>: <span class="number">200</span>,
+              <span class="string">"msg"</span>: <span class="string">"ok"</span>,
+              <span class="string">"result"</span>: {
+                <span class="string">"number"</span>: result.number,
+                <span class="string">"mac"</span>: result.mac,
+                <span class="string">"created_at"</span>: result.created_at,
+                <span class="string">"last_seen"</span>: result.last_seen
+              }
+            };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-30">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-30">&#182;</a>
+              </div>
+              <p>success!</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            app.log.debug(<span class="string">"REG: Success!"</span>, a);
+            callback(<span class="literal">null</span>, a);
+            
+          }
+            
+        });
+        
+      }
       
-    <span class="p">});</span>
+    });
     
-  <span class="p">};</span>  </pre></div>             </td>           </tr>                               <tr id="section-31">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-31">&#182;</a>               </div>               <h1>PUBLIC METHODS</h1>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">app</span><span class="p">.</span><span class="nx">register</span> <span class="o">=</span> <span class="p">{};</span>
+  };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-31">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-31">&#182;</a>
+              </div>
+              <h1>PUBLIC METHODS</h1>
 
-  <span class="nx">app</span><span class="p">.</span><span class="nx">register</span><span class="p">.</span><span class="nx">getAll</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">wanted</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  app.register = {};
+
+  app.register.getAll = <span class="function"><span class="keyword">function</span> <span class="params">(wanted, callback)</span> {</span>
     
-    <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">{},</span>
-        <span class="nx">list</span> <span class="o">=</span> <span class="p">{};</span>
-    <span class="nx">a</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="mi">200</span><span class="p">;</span>
-    <span class="nx">a</span><span class="p">.</span><span class="nx">message</span> <span class="o">=</span> <span class="s2">&quot;ok&quot;</span><span class="p">;</span>
-    <span class="nx">a</span><span class="p">.</span><span class="nx">result</span> <span class="o">=</span> <span class="p">{};</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-32">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-32">&#182;</a>               </div>               <p>Set default wanted, if none given.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">wanted</span> <span class="o">||</span> <span class="nx">wanted</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">wanted</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;knoten&quot;</span><span class="p">];</span>
-    <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-33">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-33">&#182;</a>               </div>               <p>prepare arrays for each possibly wanted property list</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">lists</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">prop</span><span class="p">)</span> <span class="p">{</span>
-      </pre></div>             </td>           </tr>                               <tr id="section-34">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-34">&#182;</a>               </div>               <p>create an list array</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">list</span><span class="p">[</span><span class="nx">prop</span><span class="p">]</span> <span class="o">=</span> <span class="p">[];</span>
+    <span class="keyword">var</span> a = {},
+        list = {};
+    a.status = <span class="number">200</span>;
+    a.message = <span class="string">"ok"</span>;
+    a.result = {};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-32">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-32">&#182;</a>
+              </div>
+              <p>Set default wanted, if none given.</p>
 
-    <span class="p">});</span>
-        </pre></div>             </td>           </tr>                               <tr id="section-35">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-35">&#182;</a>               </div>               <p>Fetch the database.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">Knoten</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
-      </pre></div>             </td>           </tr>                               <tr id="section-36">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-36">&#182;</a>               </div>               <p>If there was an error, </p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
-        </pre></div>             </td>           </tr>                               <tr id="section-37">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-37">&#182;</a>               </div>               <p>that would be a db error, so it is our fault.</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">app</span><span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="s2">&quot;Sorry, this is a bug  m(&quot;</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
-        <span class="k">return</span><span class="p">;</span>
-      </pre></div>             </td>           </tr>                               <tr id="section-38">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-38">&#182;</a>               </div>               <p>If there was no error, </p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="p">}</span> 
-      <span class="k">else</span> <span class="p">{</span> </pre></div>             </td>           </tr>                               <tr id="section-39">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-39">&#182;</a>               </div>               <p>If no error, we build an answer:</p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-40">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-40">&#182;</a>               </div>               <p>Now, for each database object, </p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">res</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">nr</span><span class="p">){</span>
-          </pre></div>             </td>           </tr>                               <tr id="section-41">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-41">&#182;</a>               </div>               <p>make a tmp knoten, </p>             </td>             <td class="code">               <div class="highlight"><pre>          <span class="kd">var</span> <span class="nx">knoten</span> <span class="o">=</span> <span class="p">{};</span>
-          </pre></div>             </td>           </tr>                               <tr id="section-42">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-42">&#182;</a>               </div>               <p>add the whitelisted properties; </p>             </td>             <td class="code">               <div class="highlight"><pre>          <span class="nx">whitelist</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">prop</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">knoten</span><span class="p">[</span><span class="nx">prop</span><span class="p">]</span> <span class="o">=</span> <span class="nx">res</span><span class="p">[</span><span class="nx">nr</span><span class="p">][</span><span class="nx">prop</span><span class="p">];</span>
-          <span class="p">});</span>
-          </pre></div>             </td>           </tr>                               <tr id="section-43">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-43">&#182;</a>               </div>               <p>and for each possible list</p>             </td>             <td class="code">               <div class="highlight"><pre>          <span class="nx">lists</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">prop</span><span class="p">)</span> <span class="p">{</span>
-            </pre></div>             </td>           </tr>                               <tr id="section-44">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-44">&#182;</a>               </div>               <p>if there is such a property, </p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">res</span><span class="p">[</span><span class="nx">nr</span><span class="p">][</span><span class="nx">prop</span><span class="p">])</span> <span class="p">{</span>
-                        </pre></div>             </td>           </tr>                               <tr id="section-45">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-45">&#182;</a>               </div>               <p>add it to its list array; </p>             </td>             <td class="code">               <div class="highlight"><pre>              <span class="nx">list</span><span class="p">[</span><span class="nx">prop</span><span class="p">].</span><span class="nx">push</span><span class="p">(</span><span class="nx">res</span><span class="p">[</span><span class="nx">nr</span><span class="p">][</span><span class="nx">prop</span><span class="p">]</span> <span class="o">||</span> <span class="nx">knoten</span><span class="p">[</span><span class="nx">prop</span><span class="p">]);</span>
+            </div>
             
-            <span class="p">}</span>
-            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">prop</span> <span class="o">===</span> <span class="s2">&quot;knoten&quot;</span><span class="p">)</span> <span class="p">{</span>
-              </pre></div>             </td>           </tr>                               <tr id="section-46">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-46">&#182;</a>               </div>               <p>also add the knoten itself into list. </p>             </td>             <td class="code">               <div class="highlight"><pre>              <span class="nx">list</span><span class="p">.</span><span class="nx">knoten</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">knoten</span><span class="p">);</span>
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">if</span> (!wanted || wanted.length === <span class="number">0</span>) {
+      wanted = [<span class="string">"knoten"</span>];
+    }</pre></div></div>
             
-            <span class="p">}</span>
+        </li>
+        
+        
+        <li id="section-33">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-33">&#182;</a>
+              </div>
+              <p>prepare arrays for each possibly wanted property list</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    lists.forEach(<span class="function"><span class="keyword">function</span> <span class="params">(prop)</span> {</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-34">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-34">&#182;</a>
+              </div>
+              <p>create an list array</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      list[prop] = [];
+
+    });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-35">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-35">&#182;</a>
+              </div>
+              <p>Fetch the database.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    Knoten.all(<span class="function"><span class="keyword">function</span> <span class="params">(err, res)</span> {</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-36">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-36">&#182;</a>
+              </div>
+              <p>If there was an error, </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="keyword">if</span> (err) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-37">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-37">&#182;</a>
+              </div>
+              <p>that would be a db error, so it is our fault.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        app.fail(<span class="number">500</span>, <span class="string">"Sorry, this is a bug  m("</span>, callback);
+        <span class="keyword">return</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-38">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-38">&#182;</a>
+              </div>
+              <p>If there was no error, </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      } 
+      <span class="keyword">else</span> {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-39">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-39">&#182;</a>
+              </div>
+              <p>If no error, we build an answer:</p>
+<p>Now, for each database object, </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        Object.keys(res).forEach(<span class="function"><span class="keyword">function</span> <span class="params">(nr)</span>{</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-40">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-40">&#182;</a>
+              </div>
+              <p>make a tmp knoten, </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          <span class="keyword">var</span> knoten = {};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-41">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-41">&#182;</a>
+              </div>
+              <p>add the whitelisted properties; </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          whitelist.forEach(<span class="function"><span class="keyword">function</span> <span class="params">(prop)</span> {</span>
+            knoten[prop] = res[nr][prop];
+          });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-42">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-42">&#182;</a>
+              </div>
+              <p>and for each possible list</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          lists.forEach(<span class="function"><span class="keyword">function</span> <span class="params">(prop)</span> {</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-43">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-43">&#182;</a>
+              </div>
+              <p>if there is such a property, </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            <span class="keyword">if</span> (res[nr][prop]) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-44">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-44">&#182;</a>
+              </div>
+              <p>add it to its list array; </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>              list[prop].push(res[nr][prop] || knoten[prop]);
+            
+            }
+            <span class="keyword">else</span> <span class="keyword">if</span> (prop === <span class="string">"knoten"</span>) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-45">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-45">&#182;</a>
+              </div>
+              <p>also add the knoten itself into list. </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>              list.knoten.push(knoten);
+            
+            }
                           
-          <span class="p">});</span>
+          });
           
-        <span class="p">});</span>
+        });
         
-      <span class="p">}</span>
-      </pre></div>             </td>           </tr>                               <tr id="section-47">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-47">&#182;</a>               </div>               <p>now, for each possible list</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">lists</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">prop</span><span class="p">)</span> <span class="p">{</span>
-            </pre></div>             </td>           </tr>                               <tr id="section-48">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-48">&#182;</a>               </div>               <p>If the list is wanted, </p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">wanted</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">prop</span><span class="p">)</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span> <span class="p">)</span> <span class="p">{</span>
-          </pre></div>             </td>           </tr>                               <tr id="section-49">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-49">&#182;</a>               </div>               <p>add it to the result, </p>             </td>             <td class="code">               <div class="highlight"><pre>          <span class="k">if</span> <span class="p">(</span><span class="nx">prop</span> <span class="o">===</span> <span class="s2">&quot;knoten&quot;</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-50">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-50">&#182;</a>               </div>               <p>in case its a knoten in singular, </p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="nx">a</span><span class="p">.</span><span class="nx">result</span><span class="p">[</span><span class="nx">prop</span><span class="p">]</span> <span class="o">=</span> <span class="nx">list</span><span class="p">[</span><span class="nx">prop</span><span class="p">];</span>
+      }</pre></div></div>
             
-          <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            </pre></div>             </td>           </tr>                               <tr id="section-51">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-51">&#182;</a>               </div>               <p>otherwise in plural.</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="nx">a</span><span class="p">.</span><span class="nx">result</span><span class="p">[</span><span class="nx">prop</span> <span class="o">+</span> <span class="s2">&quot;s&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">list</span><span class="p">[</span><span class="nx">prop</span><span class="p">];</span>
+        </li>
+        
+        
+        <li id="section-46">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-46">&#182;</a>
+              </div>
+              <p>now, for each possible list</p>
 
-          <span class="p">}</span>
-        <span class="p">}</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      lists.forEach(<span class="keyword">function</span>(prop) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-47">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-47">&#182;</a>
+              </div>
+              <p>If the list is wanted, </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="keyword">if</span> (wanted.indexOf(prop) !== -<span class="number">1</span> ) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-48">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-48">&#182;</a>
+              </div>
+              <p>add it to the result, </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          <span class="keyword">if</span> (prop === <span class="string">"knoten"</span>) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-49">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-49">&#182;</a>
+              </div>
+              <p>in case its a knoten in singular, </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            a.result[prop] = list[prop];
+            
+          } <span class="keyword">else</span> {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-50">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-50">&#182;</a>
+              </div>
+              <p>otherwise in plural.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            a.result[prop + <span class="string">"s"</span>] = list[prop];
+
+          }
+        }
                     
-      <span class="p">});</span>
-      </pre></div>             </td>           </tr>                               <tr id="section-52">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-52">&#182;</a>               </div>               <p>Finally, callback with the answer.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">callback</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">a</span><span class="p">);</span>
-      
-    <span class="p">});</span>
-    
-  <span class="p">};</span>
-  
-  <span class="nx">app</span><span class="p">.</span><span class="nx">register</span><span class="p">.</span><span class="nx">get</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">number</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+      });</pre></div></div>
             
-    <span class="nx">Knoten</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">number</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">knoten</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-53">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-53">&#182;</a>               </div>               <p>respond with error, if any</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-54">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-54">&#182;</a>               </div>               <p>we just assume a 404</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">app</span><span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="mi">404</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
-        <span class="k">return</span><span class="p">;</span>
-      
-      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> <span class="c1">// if no error, </span></pre></div>             </td>           </tr>                               <tr id="section-55">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-55">&#182;</a>               </div>               <p>build answer        </p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">{</span>
-          <span class="s2">&quot;status&quot;</span><span class="o">:</span> <span class="mi">200</span><span class="p">,</span>
-          <span class="s2">&quot;msg&quot;</span><span class="o">:</span> <span class="s2">&quot;ok&quot;</span><span class="p">,</span>
-          <span class="s2">&quot;result&quot;</span><span class="o">:</span> <span class="p">{</span>
-            <span class="s2">&quot;number&quot;</span><span class="o">:</span> <span class="nx">knoten</span><span class="p">.</span><span class="nx">number</span><span class="p">,</span></pre></div>             </td>           </tr>                               <tr id="section-56">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-56">&#182;</a>               </div>               <p>we pick the just values we want from the db result</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="s2">&quot;mac&quot;</span><span class="o">:</span> <span class="nx">knoten</span><span class="p">.</span><span class="nx">mac</span><span class="p">,</span>
-            <span class="s2">&quot;created_at&quot;</span><span class="o">:</span> <span class="nx">knoten</span><span class="p">.</span><span class="nx">ctime</span><span class="p">,</span>
-            <span class="s2">&quot;last_seen&quot;</span><span class="o">:</span> <span class="nx">knoten</span><span class="p">.</span><span class="nx">mtime</span>
-          <span class="p">}</span>
-        <span class="p">};</span>
-      <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-57">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-57">&#182;</a>               </div>               <p>send the answer</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">callback</span><span class="p">(</span><span class="nx">a</span><span class="p">);</span>
-    <span class="p">});</span>
-  <span class="p">};</span>
-  </pre></div>             </td>           </tr>                               <tr id="section-58">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-58">&#182;</a>               </div>               <h1>AUTOREGISTRATION</h1>
+        </li>
+        
+        
+        <li id="section-51">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-51">&#182;</a>
+              </div>
+              <p>Finally, callback with the answer.</p>
 
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      callback(<span class="literal">null</span>, a);
+      
+    });
+    
+  };
+  
+  app.register.get = <span class="function"><span class="keyword">function</span> <span class="params">(number, callback)</span> {</span>
+            
+    Knoten.get(number, <span class="keyword">function</span>(err, knoten) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-52">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-52">&#182;</a>
+              </div>
+              <p>respond with error, if any</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="keyword">if</span> (err) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-53">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-53">&#182;</a>
+              </div>
+              <p>we just assume a 404</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        app.fail(<span class="number">404</span>, <span class="literal">null</span>, callback);
+        <span class="keyword">return</span>;
+      
+      } <span class="keyword">else</span> { <span class="comment">// if no error, </span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-54">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-54">&#182;</a>
+              </div>
+              <p>build answer        </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="keyword">var</span> a = {
+          <span class="string">"status"</span>: <span class="number">200</span>,
+          <span class="string">"msg"</span>: <span class="string">"ok"</span>,
+          <span class="string">"result"</span>: {
+            <span class="string">"number"</span>: knoten.number,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-55">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-55">&#182;</a>
+              </div>
+              <p>we pick the just values we want from the db result</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            <span class="string">"mac"</span>: knoten.mac,
+            <span class="string">"created_at"</span>: knoten.ctime,
+            <span class="string">"last_seen"</span>: knoten.mtime
+          }
+        };
+      }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-56">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-56">&#182;</a>
+              </div>
+              <p>send the answer</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      callback(a);
+    });
+  };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-57">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-57">&#182;</a>
+              </div>
+              <h1>AUTOREGISTRATION</h1>
 <ul>
-<li>CREATE(mac, pass) -> NEW KNOTEN(NEW NUMBER)
-<ul><li>check for pass &amp;&amp; mac</li>
-<li>check if mac is registered -> redirect(303, number)</li>
-<li>if ok, fetch fresh number, then CREATE</li></ul></li>
-</ul>             </td>             <td class="code">               <div class="highlight"><pre>    
-  <span class="nx">app</span><span class="p">.</span><span class="nx">register</span><span class="p">.</span><span class="nx">create</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">mac</span><span class="p">,</span> <span class="nx">pass</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-59">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-59">&#182;</a>               </div>               <ul>
+<li>CREATE(mac, pass) -&gt; NEW KNOTEN(NEW NUMBER)<ul>
+<li>check for pass &amp;&amp; mac</li>
+<li>check if mac is registered -&gt; redirect(303, number)</li>
+<li>if ok, fetch fresh number, then CREATE</li>
+</ul>
+</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    
+  app.register.create = <span class="function"><span class="keyword">function</span> <span class="params">(mac, pass, callback)</span> {</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-58">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-58">&#182;</a>
+              </div>
+              <ul>
 <li>check for missing parameters</li>
-</ul>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">mac</span> <span class="o">||</span> <span class="o">!</span><span class="nx">pass</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">app</span><span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="p">{</span> <span class="nx">error</span><span class="o">:</span> <span class="s2">&quot;Missing info!&quot;</span> <span class="p">},</span> <span class="nx">callback</span><span class="p">);</span>
-      <span class="k">return</span><span class="p">;</span>
-    <span class="p">}</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-60">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-60">&#182;</a>               </div>               <ul>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">if</span> (!mac || !pass) {
+      app.fail(<span class="number">400</span>, { error: <span class="string">"Missing info!"</span> }, callback);
+      <span class="keyword">return</span>;
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-59">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-59">&#182;</a>
+              </div>
+              <ul>
 <li>build given (request) data</li>
-</ul>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">given</span> <span class="o">=</span> <span class="p">{};</span>
-    <span class="nx">given</span><span class="p">.</span><span class="nx">pass</span> <span class="o">=</span> <span class="nx">pass</span><span class="p">;</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-61">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-61">&#182;</a>               </div>               <ul>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">var</span> given = {};
+    given.pass = pass;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-60">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-60">&#182;</a>
+              </div>
+              <ul>
 <li>check for invalid MAC (if any)</li>
-</ul>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">mac</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">tool</span><span class="p">.</span><span class="nx">isValidMac</span><span class="p">(</span><span class="nx">mac</span><span class="p">))</span> <span class="p">{</span>
-        <span class="nx">app</span><span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="p">{</span> <span class="nx">error</span><span class="o">:</span> <span class="s2">&quot;Malformed MAC!&quot;</span> <span class="p">},</span> <span class="nx">callback</span><span class="p">);</span>
-        <span class="k">return</span><span class="p">;</span>
-      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> 
-        <span class="nx">given</span><span class="p">.</span><span class="nx">mac</span> <span class="o">=</span> <span class="nx">tool</span><span class="p">.</span><span class="nx">normalizeMac</span><span class="p">(</span><span class="nx">mac</span><span class="p">);</span>
-      <span class="p">}</span>
-    <span class="p">}</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-62">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-62">&#182;</a>               </div>               <p>Let's check if mac is already registered: </p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">Knoten</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">registered</span><span class="p">)</span> <span class="p">{</span>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">if</span> (mac) {
+      <span class="keyword">if</span> (!tool.isValidMac(mac)) {
+        app.fail(<span class="number">400</span>, { error: <span class="string">"Malformed MAC!"</span> }, callback);
+        <span class="keyword">return</span>;
+      } <span class="keyword">else</span> { 
+        given.mac = tool.normalizeMac(mac);
+      }
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-61">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-61">&#182;</a>
+              </div>
+              <p>Let&#39;s check if mac is already registered: </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    Knoten.all(<span class="function"><span class="keyword">function</span> <span class="params">(err, registered)</span> {</span>
                      
-      <span class="kd">var</span> <span class="nx">knoten</span><span class="p">,</span> 
-          <span class="nx">ok</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span> <span class="c1">// we have to be optimistic</span>
-      </pre></div>             </td>           </tr>                               <tr id="section-63">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-63">&#182;</a>               </div>               <p>For each knoten, </p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">for</span> <span class="p">(</span><span class="nx">knoten</span> <span class="k">in</span> <span class="nx">registered</span><span class="p">){</span>
-        </pre></div>             </td>           </tr>                               <tr id="section-64">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-64">&#182;</a>               </div>               <p>(filter unwanted properties from the prototype) and</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">registered</span><span class="p">[</span><span class="nx">knoten</span><span class="p">].</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s2">&quot;mac&quot;</span><span class="p">))</span> <span class="p">{</span>
-          </pre></div>             </td>           </tr>                               <tr id="section-65">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-65">&#182;</a>               </div>               <p>check if one the registered nodes has the given mac,    </p>             </td>             <td class="code">               <div class="highlight"><pre>          <span class="k">if</span> <span class="p">(</span><span class="nx">given</span><span class="p">.</span><span class="nx">mac</span> <span class="o">===</span> <span class="nx">registered</span><span class="p">[</span><span class="nx">knoten</span><span class="p">].</span><span class="nx">mac</span><span class="p">)</span> <span class="p">{</span>
-          </pre></div>             </td>           </tr>                               <tr id="section-66">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-66">&#182;</a>               </div>               <p>and only then we are not <code>ok</code>!</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="nx">ok</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-            </pre></div>             </td>           </tr>                               <tr id="section-67">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-67">&#182;</a>               </div>               <ul>
+      <span class="keyword">var</span> knoten, 
+          ok = <span class="literal">true</span>; <span class="comment">// we have to be optimistic</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-62">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-62">&#182;</a>
+              </div>
+              <p>For each knoten, </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="keyword">for</span> (knoten <span class="keyword">in</span> registered){</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-63">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-63">&#182;</a>
+              </div>
+              <p>(filter unwanted properties from the prototype) and</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="keyword">if</span> (registered[knoten].hasOwnProperty(<span class="string">"mac"</span>)) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-64">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-64">&#182;</a>
+              </div>
+              <p>check if one the registered nodes has the given mac,    </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          <span class="keyword">if</span> (given.mac === registered[knoten].mac) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-65">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-65">&#182;</a>
+              </div>
+              <p>and only then we are not <code>ok</code>!</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            ok = <span class="literal">false</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-66">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-66">&#182;</a>
+              </div>
+              <ul>
 <li>build error result: </li>
-</ul>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="kd">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="p">{</span>
-              <span class="s2">&quot;location&quot;</span><span class="o">:</span> <span class="s2">&quot;/knoten/&quot;</span> <span class="o">+</span> <span class="nx">registered</span><span class="p">[</span><span class="nx">knoten</span><span class="p">].</span><span class="nx">number</span><span class="p">,</span>
-              <span class="s2">&quot;number&quot;</span><span class="o">:</span> <span class="nx">registered</span><span class="p">[</span><span class="nx">knoten</span><span class="p">].</span><span class="nx">number</span><span class="p">,</span>           
-              <span class="s2">&quot;mac&quot;</span><span class="o">:</span> <span class="nx">registered</span><span class="p">[</span><span class="nx">knoten</span><span class="p">].</span><span class="nx">mac</span><span class="p">,</span>
-              <span class="s2">&quot;last_seen&quot;</span><span class="o">:</span> <span class="nx">registered</span><span class="p">[</span><span class="nx">knoten</span><span class="p">].</span><span class="nx">mtime</span>
-            <span class="p">};</span>
-            
-          <span class="p">}</span>
-          
-        <span class="p">}</span>
-      
-      <span class="p">}</span>
-      
-      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">ok</span><span class="p">)</span> <span class="p">{</span>
-        </pre></div>             </td>           </tr>                               <tr id="section-68">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-68">&#182;</a>               </div>               <blockquote>
-  <p>Error: no double entries!</p>
-</blockquote>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">app</span><span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="mi">303</span><span class="p">,</span> <span class="nx">r</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>            
-        <span class="k">return</span><span class="p">;</span>
-        
-      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        
-        <span class="nx">getfirstFreeNumber</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
-          
-          <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
-            
-            <span class="nx">app</span><span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="mi">404</span><span class="p">,</span> <span class="s2">&quot;No free numbers!&quot;</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
-            <span class="k">return</span><span class="p">;</span>
-            
-          <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-          
-            <span class="nx">given</span><span class="p">.</span><span class="nx">number</span> <span class="o">=</span> <span class="nx">number</span><span class="p">;</span>
-          
-            <span class="nx">app</span><span class="p">.</span><span class="nx">log</span><span class="p">.</span><span class="nx">debug</span><span class="p">(</span><span class="s1">&#39;Try Autocreate Knoten!&#39;</span><span class="p">,</span> <span class="nx">given</span><span class="p">);</span>
-            <span class="nx">createKnoten</span><span class="p">(</span><span class="nx">given</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
-            
-          <span class="p">}</span>
-          
-        <span class="p">});</span>
-        
-      <span class="p">}</span>
-      
-    <span class="p">});</span>
-    
-  <span class="p">};</span>
-  </pre></div>             </td>           </tr>                               <tr id="section-69">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-69">&#182;</a>               </div>               <h2>REST: UPDATE</h2>
+</ul>
 
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            <span class="keyword">var</span> r = {
+              <span class="string">"location"</span>: <span class="string">"/knoten/"</span> + registered[knoten].number,
+              <span class="string">"number"</span>: registered[knoten].number,           
+              <span class="string">"mac"</span>: registered[knoten].mac,
+              <span class="string">"last_seen"</span>: registered[knoten].mtime
+            };
+            
+          }
+          
+        }
+      
+      }
+      
+      <span class="keyword">if</span> (!ok) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-67">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-67">&#182;</a>
+              </div>
+              <blockquote>
+<p>Error: no double entries!</p>
+</blockquote>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        app.fail(<span class="number">303</span>, r, callback);            
+        <span class="keyword">return</span>;
+        
+      } <span class="keyword">else</span> {
+        
+        getfirstFreeNumber(<span class="function"><span class="keyword">function</span> <span class="params">(err, number)</span> {</span>
+          
+          <span class="keyword">if</span> (err) {
+            
+            app.fail(<span class="number">404</span>, <span class="string">"No free numbers!"</span>, callback);
+            <span class="keyword">return</span>;
+            
+          } <span class="keyword">else</span> {
+          
+            given.number = number;
+          
+            app.log.debug(<span class="string">'Try Autocreate Knoten!'</span>, given);
+            createKnoten(given, callback);
+            
+          }
+          
+        });
+        
+      }
+      
+    });
+    
+  };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-68">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h2">
+                <a class="pilcrow" href="#section-68">&#182;</a>
+              </div>
+              <h2>REST: UPDATE</h2>
 <p>we validate input and find out which of these actions to do: </p>
-
 <ul>
-<li><p>RESERVATION(number, pass) -> NEW KNOTEN(NUMBER)</p>
+<li><p>RESERVATION(number, pass) -&gt; NEW KNOTEN(NUMBER)</p>
+<ul>
+<li>like heartbeat, just without mac</li>
+</ul>
+</li>
+<li><p>FULLREG(number, mac, pass) -&gt; NEW KNOTEN(NUMBER)</p>
+<ul>
+<li>like heartbeat, but CREATE knoten</li>
+</ul>
+</li>
+<li><p>HEARTBEAT(number, mac, pass) -&gt; UPDATE KNOTEN(NUMBER)</p>
+<ul>
+<li>check pass and mac</li>
+</ul>
+</li>
+</ul>
 
-<ul><li>like heartbeat, just without mac</li></ul></li>
-<li><p>FULLREG(number, mac, pass) -> NEW KNOTEN(NUMBER)</p>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  
+  app.register.update = <span class="function"><span class="keyword">function</span> <span class="params">(number, mac, pass, callback)</span> {</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-69">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-69">&#182;</a>
+              </div>
+              <p>check for missing parameters</p>
 
-<ul><li>like heartbeat, but CREATE knoten</li></ul></li>
-<li><p>HEARTBEAT(number, mac, pass) -> UPDATE KNOTEN(NUMBER)</p>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">if</span> (!number || !pass) {
+      app.fail(<span class="number">400</span>, <span class="literal">null</span>, callback);
+      <span class="keyword">return</span>;
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-70">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-70">&#182;</a>
+              </div>
+              <h1>build given (request) data</h1>
 
-<ul><li>check pass and mac</li></ul></li>
-</ul>             </td>             <td class="code">               <div class="highlight"><pre>  
-  <span class="nx">app</span><span class="p">.</span><span class="nx">register</span><span class="p">.</span><span class="nx">update</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">number</span><span class="p">,</span> <span class="nx">mac</span><span class="p">,</span> <span class="nx">pass</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>    
-    </pre></div>             </td>           </tr>                               <tr id="section-70">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-70">&#182;</a>               </div>               <p>check for missing parameters</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">number</span> <span class="o">||</span> <span class="o">!</span><span class="nx">pass</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">app</span><span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
-      <span class="k">return</span><span class="p">;</span>
-    <span class="p">}</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-71">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-71">&#182;</a>               </div>               <h1>build given (request) data</h1>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">given</span> <span class="o">=</span> <span class="p">{};</span>
-    <span class="nx">given</span><span class="p">.</span><span class="nx">number</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">number</span><span class="p">);</span>
-    <span class="nx">given</span><span class="p">.</span><span class="nx">pass</span> <span class="o">=</span> <span class="nx">pass</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-72">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-72">&#182;</a>               </div>               <ul>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">var</span> given = {};
+    given.number = parseInt(number);
+    given.pass = pass;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-71">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-71">&#182;</a>
+              </div>
+              <ul>
 <li>check for invalid MAC (if any)</li>
-</ul>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">mac</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">tool</span><span class="p">.</span><span class="nx">isValidMac</span><span class="p">(</span><span class="nx">mac</span><span class="p">))</span> <span class="p">{</span>
-        <span class="nx">app</span><span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="p">{</span> <span class="nx">error</span><span class="o">:</span> <span class="s2">&quot;Malformed MAC!&quot;</span> <span class="p">},</span> <span class="nx">callback</span><span class="p">);</span>
-        <span class="k">return</span><span class="p">;</span>
-      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> 
-        <span class="nx">given</span><span class="p">.</span><span class="nx">mac</span> <span class="o">=</span> <span class="nx">tool</span><span class="p">.</span><span class="nx">normalizeMac</span><span class="p">(</span><span class="nx">mac</span><span class="p">);</span>
-      <span class="p">}</span>
-    <span class="p">}</span>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">if</span> (mac) {
+      <span class="keyword">if</span> (!tool.isValidMac(mac)) {
+        app.fail(<span class="number">400</span>, { error: <span class="string">"Malformed MAC!"</span> }, callback);
+        <span class="keyword">return</span>;
+      } <span class="keyword">else</span> { 
+        given.mac = tool.normalizeMac(mac);
+      }
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-72">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-72">&#182;</a>
+              </div>
+              <p>HEARTBEAT:
+first, we check if the number already exists:</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    Knoten.get(given.number, <span class="keyword">function</span>(err, registered) {
+            
+      <span class="keyword">if</span> (!err) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-73">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-73">&#182;</a>
+              </div>
+              <p>NO error: 
+number exists! check &quot;auth&quot;!</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        
+        <span class="keyword">if</span> (registered.pass) {
+          
+          <span class="keyword">if</span> (given.pass !== registered.pass) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-74">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-74">&#182;</a>
+              </div>
+              <p>the pass is wrong: Error 401 Unauthorized</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            app.fail(<span class="number">401</span>, <span class="string">"Wrong $PASS"</span>, callback);
+            <span class="keyword">return</span>;
+          
+          } <span class="keyword">else</span> {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-75">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-75">&#182;</a>
+              </div>
+              <p>&quot;auth&quot; succes, we have our knoten to update</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            app.log.debug(<span class="string">'API: Try Update Knoten!'</span>, given);
+            updateKnoten(given, callback);
+          
+          }
+          
+        } <span class="keyword">else</span> {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-76">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-76">&#182;</a>
+              </div>
+              <p>there was no pass to check, so the number was just &quot;reserved&quot;.
+since we still got a heartbeat, we may allow &quot;capturing&quot; the number.</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-77">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-77">&#182;</a>
+              </div>
+              <p>but only if it has a mac!
+TODO: ask @bittorf about this check, seems to make sense</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          <span class="keyword">if</span> (!mac) {
+            app.fail(<span class="number">400</span>, <span class="literal">null</span>, callback);
+            <span class="keyword">return</span>;
+            
+          } <span class="keyword">else</span> {
+            
+            app.log.debug(<span class="string">'API: Try Capture Reserved Knoten!'</span>, given);
+            updateKnoten(given, callback);
+            
+          }
+          
+        } 
+      
+      } <span class="keyword">else</span> {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-78">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-78">&#182;</a>
+              </div>
+              <p>REGISTRATION:
+db error: number does NOT exist! try new entry!</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      
+      app.log.debug(<span class="string">'API: Try Create Knoten!'</span>, given);
+      createKnoten(given, callback);
+      
+    }
+      
+    });
     
-    </pre></div>             </td>           </tr>                               <tr id="section-73">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-73">&#182;</a>               </div>               <p>HEARTBEAT:
-first, we check if the number already exists:</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">Knoten</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">given</span><span class="p">.</span><span class="nx">number</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">registered</span><span class="p">)</span> <span class="p">{</span>
-            
-      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-74">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-74">&#182;</a>               </div>               <p>NO error: 
-number exists! check "auth"!</p>             </td>             <td class="code">               <div class="highlight"><pre>        
-        <span class="k">if</span> <span class="p">(</span><span class="nx">registered</span><span class="p">.</span><span class="nx">pass</span><span class="p">)</span> <span class="p">{</span>
-          
-          <span class="k">if</span> <span class="p">(</span><span class="nx">given</span><span class="p">.</span><span class="nx">pass</span> <span class="o">!==</span> <span class="nx">registered</span><span class="p">.</span><span class="nx">pass</span><span class="p">)</span> <span class="p">{</span>
-                    </pre></div>             </td>           </tr>                               <tr id="section-75">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-75">&#182;</a>               </div>               <p>the pass is wrong: Error 401 Unauthorized</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="nx">app</span><span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="mi">401</span><span class="p">,</span> <span class="s2">&quot;Wrong $PASS&quot;</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
-            <span class="k">return</span><span class="p">;</span>
-          
-          <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        </pre></div>             </td>           </tr>                               <tr id="section-76">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-76">&#182;</a>               </div>               <p>"auth" succes, we have our knoten to update</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="nx">app</span><span class="p">.</span><span class="nx">log</span><span class="p">.</span><span class="nx">debug</span><span class="p">(</span><span class="s1">&#39;API: Try Update Knoten!&#39;</span><span class="p">,</span> <span class="nx">given</span><span class="p">);</span>
-            <span class="nx">updateKnoten</span><span class="p">(</span><span class="nx">given</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
-          
-          <span class="p">}</span>
-          
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-77">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-77">&#182;</a>               </div>               <p>there was no pass to check, so the number was just "reserved".
-since we still got a heartbeat, we may allow "capturing" the number.</p>             </td>             <td class="code">               <div class="highlight"><pre>          </pre></div>             </td>           </tr>                               <tr id="section-78">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-78">&#182;</a>               </div>               <p>but only if it has a mac!
-TODO: ask @bittorf about this check, seems to make sense</p>             </td>             <td class="code">               <div class="highlight"><pre>          <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">mac</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">app</span><span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
-            <span class="k">return</span><span class="p">;</span>
-            
-          <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            
-            <span class="nx">app</span><span class="p">.</span><span class="nx">log</span><span class="p">.</span><span class="nx">debug</span><span class="p">(</span><span class="s1">&#39;API: Try Capture Reserved Knoten!&#39;</span><span class="p">,</span> <span class="nx">given</span><span class="p">);</span>
-            <span class="nx">updateKnoten</span><span class="p">(</span><span class="nx">given</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
-            
-          <span class="p">}</span>
-          
-        <span class="p">}</span> 
-      
-      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        </pre></div>             </td>           </tr>                               <tr id="section-79">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-79">&#182;</a>               </div>               <p>REGISTRATION:
-db error: number does NOT exist! try new entry!</p>             </td>             <td class="code">               <div class="highlight"><pre>      
-      <span class="nx">app</span><span class="p">.</span><span class="nx">log</span><span class="p">.</span><span class="nx">debug</span><span class="p">(</span><span class="s1">&#39;API: Try Create Knoten!&#39;</span><span class="p">,</span> <span class="nx">given</span><span class="p">);</span>
-      <span class="nx">createKnoten</span><span class="p">(</span><span class="nx">given</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
-      
-    <span class="p">}</span>
-      
-    <span class="p">});</span>
-    
-  <span class="p">};</span>
+  };
   
-<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-80">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-80">&#182;</a>               </div>               <p><code>exports.init</code> gets called by broadway on <code>app.init</code>.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">exports</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">done</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-81">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-81">&#182;</a>               </div>               <p>This plugin doesn't require any initialization step.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="k">return</span> <span class="nx">done</span><span class="p">();</span>
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-79">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-79">&#182;</a>
+              </div>
+              <p><code>exports.init</code> gets called by broadway on <code>app.init</code>.</p>
 
-<span class="p">};</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>exports.init = <span class="function"><span class="keyword">function</span> <span class="params">(done)</span> {</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-80">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-80">&#182;</a>
+              </div>
+              <p>This plugin doesn&#39;t require any initialization step.</p>
 
-</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">return</span> done();
+
+};</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

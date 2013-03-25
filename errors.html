@@ -1,56 +1,231 @@
-<!DOCTYPE html>  <html> <head>   <title>errors.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="app.html">                 app.js               </a>                                           <a class="source" href="common.html">                 common.js               </a>                                           <a class="source" href="errors.html">                 errors.js               </a>                                           <a class="source" href="model.html">                 model.js               </a>                                           <a class="source" href="register.html">                 register.js               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               errors.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <p><code>exports.attach</code> gets called by broadway on <code>app.use</code></p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">exports</span><span class="p">.</span><span class="nx">attach</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-  </pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>this is our app</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
-  </pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>error codes config</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">error</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="mi">303</span> <span class="o">:</span> <span class="p">{</span> 
-            <span class="s2">&quot;status&quot;</span><span class="o">:</span> <span class="mi">303</span><span class="p">,</span>
-            <span class="s2">&quot;msg&quot;</span><span class="o">:</span> <span class="s2">&quot;MAC already registered!&quot;</span>
-          <span class="p">},</span>
-    <span class="mi">400</span> <span class="o">:</span> <span class="p">{</span> 
-            <span class="s2">&quot;status&quot;</span><span class="o">:</span> <span class="mi">400</span><span class="p">,</span>
-            <span class="s2">&quot;msg&quot;</span><span class="o">:</span> <span class="s2">&quot;Bad Request!&quot;</span>
-          <span class="p">},</span>
-    <span class="mi">401</span> <span class="o">:</span> <span class="p">{</span> 
-            <span class="s2">&quot;status&quot;</span><span class="o">:</span> <span class="mi">401</span><span class="p">,</span>
-            <span class="s2">&quot;msg&quot;</span><span class="o">:</span> <span class="s2">&quot;Unauthorized!&quot;</span>
-          <span class="p">},</span>
-    <span class="mi">404</span> <span class="o">:</span> <span class="p">{</span> 
-            <span class="s2">&quot;status&quot;</span><span class="o">:</span> <span class="mi">404</span><span class="p">,</span>
-            <span class="s2">&quot;msg&quot;</span><span class="o">:</span> <span class="s2">&quot;Not Found!&quot;</span>
-          <span class="p">},</span>
-    <span class="mi">500</span> <span class="o">:</span> <span class="p">{</span> 
-            <span class="s2">&quot;status&quot;</span><span class="o">:</span> <span class="mi">500</span><span class="p">,</span>
-            <span class="s2">&quot;msg&quot;</span><span class="o">:</span> <span class="s2">&quot;Server Error!&quot;</span>      
-          <span class="p">},</span>
-    <span class="mi">501</span> <span class="o">:</span> <span class="p">{</span> 
-          <span class="s2">&quot;status&quot;</span><span class="o">:</span> <span class="mi">501</span><span class="p">,</span>
-          <span class="s2">&quot;msg&quot;</span><span class="o">:</span> <span class="s2">&quot;Not Implemented!&quot;</span>
-          <span class="p">},</span>
-    <span class="mi">666</span> <span class="o">:</span> <span class="p">{</span>
-          <span class="s2">&quot;status&quot;</span><span class="o">:</span> <span class="mi">500</span><span class="p">,</span>
-          <span class="s2">&quot;msg&quot;</span><span class="o">:</span> <span class="s2">&quot;Error message not found  o_O&quot;</span>
-    <span class="p">}</span>
-  <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>PUBLIC METHODS</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">app</span><span class="p">.</span><span class="nx">fail</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">code</span><span class="p">,</span> <span class="nx">meta</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-        
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">error</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">code</span><span class="p">))</span> <span class="p">{</span>
-      <span class="nx">code</span> <span class="o">=</span> <span class="mi">666</span>
-    <span class="p">}</span>
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>errors.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
     
-    <span class="kd">var</span> <span class="nx">err</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;status&quot;</span><span class="o">:</span> <span class="nx">error</span><span class="p">[</span><span class="nx">code</span><span class="p">][</span><span class="s2">&quot;status&quot;</span><span class="p">],</span>
-        <span class="s2">&quot;msg&quot;</span><span class="o">:</span> <span class="nx">error</span><span class="p">[</span><span class="nx">code</span><span class="p">][</span><span class="s2">&quot;msg&quot;</span><span class="p">],</span>
-        <span class="s2">&quot;result&quot;</span><span class="o">:</span> <span class="nx">meta</span> <span class="o">||</span> <span class="kc">null</span>
-      <span class="p">};</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>log the error</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">.</span><span class="nx">status</span> <span class="o">&lt;</span> <span class="mi">500</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">app</span><span class="p">.</span><span class="nx">log</span><span class="p">.</span><span class="nx">debug</span><span class="p">(</span><span class="s2">&quot;client error&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">);</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-      <span class="nx">app</span><span class="p">.</span><span class="nx">log</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s2">&quot;internal error&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">);</span>
-    <span class="p">}</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>callback with our error</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">callback</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              
+              <a class="source" href="app.html">
+                app.js
+              </a>
+            
+              
+              <a class="source" href="common.html">
+                common.js
+              </a>
+            
+              
+              <a class="source" href="errors.html">
+                errors.js
+              </a>
+            
+              
+              <a class="source" href="model.html">
+                model.js
+              </a>
+            
+              
+              <a class="source" href="register.html">
+                register.js
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>errors.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <p><code>exports.attach</code> gets called by broadway on <code>app.use</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>exports.attach = <span class="function"><span class="keyword">function</span> <span class="params">(options)</span> {</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>this is our app</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">var</span> app = <span class="keyword">this</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>error codes config</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  error = {
+    <span class="number">303</span> : { 
+            <span class="string">"status"</span>: <span class="number">303</span>,
+            <span class="string">"msg"</span>: <span class="string">"MAC already registered!"</span>
+          },
+    <span class="number">400</span> : { 
+            <span class="string">"status"</span>: <span class="number">400</span>,
+            <span class="string">"msg"</span>: <span class="string">"Bad Request!"</span>
+          },
+    <span class="number">401</span> : { 
+            <span class="string">"status"</span>: <span class="number">401</span>,
+            <span class="string">"msg"</span>: <span class="string">"Unauthorized!"</span>
+          },
+    <span class="number">404</span> : { 
+            <span class="string">"status"</span>: <span class="number">404</span>,
+            <span class="string">"msg"</span>: <span class="string">"Not Found!"</span>
+          },
+    <span class="number">500</span> : { 
+            <span class="string">"status"</span>: <span class="number">500</span>,
+            <span class="string">"msg"</span>: <span class="string">"Server Error!"</span>      
+          },
+    <span class="number">501</span> : { 
+          <span class="string">"status"</span>: <span class="number">501</span>,
+          <span class="string">"msg"</span>: <span class="string">"Not Implemented!"</span>
+          },
+    <span class="number">666</span> : {
+          <span class="string">"status"</span>: <span class="number">500</span>,
+          <span class="string">"msg"</span>: <span class="string">"Error message not found  o_O"</span>
+    }
+  };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>PUBLIC METHODS</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  app.fail = <span class="function"><span class="keyword">function</span> <span class="params">(code, meta, callback)</span> {</span>
+        
+    <span class="keyword">if</span> (!error.hasOwnProperty(code)) {
+      code = <span class="number">666</span>
+    }
+    
+    <span class="keyword">var</span> err = {
+        <span class="string">"status"</span>: error[code][<span class="string">"status"</span>],
+        <span class="string">"msg"</span>: error[code][<span class="string">"msg"</span>],
+        <span class="string">"result"</span>: meta || <span class="literal">null</span>
+      };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>log the error</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">if</span> (err.status &lt; <span class="number">500</span>) {
+      app.log.debug(<span class="string">"client error"</span>, err);
+    } <span class="keyword">else</span> {
+      app.log.error(<span class="string">"internal error"</span>, err);
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>callback with our error</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    callback(err);
       
-  <span class="p">};</span>
+  };
 
-<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p><code>exports.init</code> gets called by broadway on <code>app.init</code>.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">exports</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">done</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>This plugin doesn't require any initialization step.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="k">return</span> <span class="nx">done</span><span class="p">();</span>
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p><code>exports.init</code> gets called by broadway on <code>app.init</code>.</p>
 
-<span class="p">};</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>exports.init = <span class="function"><span class="keyword">function</span> <span class="params">(done)</span> {</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>This plugin doesn&#39;t require any initialization step.</p>
 
-</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">return</span> done();
+
+};</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

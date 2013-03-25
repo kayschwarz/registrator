@@ -1,53 +1,242 @@
-<!DOCTYPE html>  <html> <head>   <title>model.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="app.html">                 app.js               </a>                                           <a class="source" href="common.html">                 common.js               </a>                                           <a class="source" href="errors.html">                 errors.js               </a>                                           <a class="source" href="model.html">                 model.js               </a>                                           <a class="source" href="register.html">                 register.js               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               model.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">resourceful</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;resourceful&#39;</span><span class="p">),</span>
-    <span class="nx">resources</span> <span class="o">=</span> <span class="p">{};</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>set up resourceful to use couchdb</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">resourceful</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s1">&#39;couchdb&#39;</span><span class="p">,</span> <span class="p">{</span>
-  <span class="s2">&quot;https&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
-  <span class="s2">&quot;uri&quot;</span><span class="o">:</span> <span class="s1">&#39;couchdb://couch.js.ars.is&#39;</span><span class="p">,</span>
-  <span class="s2">&quot;database&quot;</span><span class="o">:</span> <span class="s2">&quot;test_registrator&quot;</span><span class="p">,</span>
-  <span class="s2">&quot;port&quot;</span><span class="o">:</span> <span class="s2">&quot;80&quot;</span><span class="p">,</span>
-  <span class="s2">&quot;auth&quot;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s2">&quot;username&quot;</span><span class="o">:</span> <span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">[</span><span class="s2">&quot;COUCH_USER&quot;</span><span class="p">],</span>
-        <span class="s2">&quot;password&quot;</span><span class="o">:</span> <span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">[</span><span class="s2">&quot;COUCH_PASS&quot;</span><span class="p">]</span>
-      <span class="p">}</span>
-<span class="p">});</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <h1>Models/Resources</h1>             </td>             <td class="code">               <div class="highlight"><pre>  </pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <h2>Resource: Knoten</h2>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">Knoten</span> <span class="o">=</span> <span class="nx">resources</span><span class="p">.</span><span class="nx">Knoten</span> <span class="o">=</span> 
-<span class="nx">resourceful</span><span class="p">.</span><span class="nx">define</span><span class="p">(</span><span class="s1">&#39;knoten&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>Specify some properties</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">string</span><span class="p">(</span><span class="s1">&#39;mac&#39;</span><span class="p">);</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">string</span><span class="p">(</span><span class="s1">&#39;pass&#39;</span><span class="p">);</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">timestamps</span><span class="p">();</span>
-    
-<span class="p">});</span>
-  
-<span class="nx">Knoten</span><span class="p">.</span><span class="nx">property</span><span class="p">(</span><span class="s1">&#39;number&#39;</span><span class="p">,</span> <span class="s1">&#39;number&#39;</span><span class="p">,</span> <span class="p">{</span>
-  <span class="nx">get</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nb">parseInt</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">properties</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
-  <span class="p">}</span>
-<span class="p">});</span>
-  
-<span class="nx">Knoten</span><span class="p">.</span><span class="nx">property</span><span class="p">(</span><span class="s1">&#39;created_at&#39;</span><span class="p">,</span> <span class="s1">&#39;number&#39;</span><span class="p">,</span> <span class="p">{</span>
-  <span class="nx">get</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">properties</span><span class="p">.</span><span class="nx">ctime</span><span class="p">;</span>
-  <span class="p">}</span>
-<span class="p">});</span>
-  
-<span class="nx">Knoten</span><span class="p">.</span><span class="nx">property</span><span class="p">(</span><span class="s1">&#39;last_seen&#39;</span><span class="p">,</span> <span class="s1">&#39;number&#39;</span><span class="p">,</span> <span class="p">{</span>
-  <span class="nx">get</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">properties</span><span class="p">.</span><span class="nx">mtime</span><span class="p">;</span>
-  <span class="p">}</span>
-<span class="p">});</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <h2>Resource: Network</h2>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">Network</span> <span class="o">=</span> <span class="nx">resources</span><span class="p">.</span><span class="nx">Network</span> <span class="o">=</span> 
-<span class="nx">resourceful</span><span class="p">.</span><span class="nx">define</span><span class="p">(</span><span class="s1">&#39;network&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-    
-  <span class="k">this</span><span class="p">.</span><span class="nx">string</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">);</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">number</span><span class="p">(</span><span class="s1">&#39;range_min&#39;</span><span class="p">);</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">number</span><span class="p">(</span><span class="s1">&#39;range_max&#39;</span><span class="p">);</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">number</span><span class="p">(</span><span class="s1">&#39;lease_days&#39;</span><span class="p">);</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">timestamps</span><span class="p">();</span>
-    
-<span class="p">});</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>export the resources as module</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">exports</span><span class="p">.</span><span class="nx">resources</span> <span class="o">=</span> <span class="nx">resources</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>export self as broadway plugin</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">exports</span><span class="p">.</span><span class="nx">attach</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>attach resources to app</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">resources</span> <span class="o">=</span> <span class="nx">resources</span><span class="p">;</span>
+<!DOCTYPE html>
 
-<span class="p">};</span>
+<html>
+<head>
+  <title>model.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              
+              <a class="source" href="app.html">
+                app.js
+              </a>
+            
+              
+              <a class="source" href="common.html">
+                common.js
+              </a>
+            
+              
+              <a class="source" href="errors.html">
+                errors.js
+              </a>
+            
+              
+              <a class="source" href="model.html">
+                model.js
+              </a>
+            
+              
+              <a class="source" href="register.html">
+                register.js
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>model.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="keyword">var</span> resourceful = require(<span class="string">'resourceful'</span>),
+    resources = {};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>set up resourceful to use couchdb</p>
 
-<span class="nx">exports</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">done</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">done</span><span class="p">();</span>
-<span class="p">};</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>resourceful.use(<span class="string">'couchdb'</span>, {
+  <span class="string">"https"</span>: <span class="literal">false</span>,
+  <span class="string">"uri"</span>: <span class="string">'couchdb://couch.js.ars.is'</span>,
+  <span class="string">"database"</span>: <span class="string">"test_registrator"</span>,
+  <span class="string">"port"</span>: <span class="string">"80"</span>,
+  <span class="string">"auth"</span>: {
+        <span class="string">"username"</span>: process.env[<span class="string">"COUCH_USER"</span>],
+        <span class="string">"password"</span>: process.env[<span class="string">"COUCH_PASS"</span>]
+      }
+});</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <h1>Models/Resources</h1>
 
-</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h2">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <h2>Resource: Knoten</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="keyword">var</span> Knoten = resources.Knoten = 
+resourceful.define(<span class="string">'knoten'</span>, <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Specify some properties</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">this</span>.string(<span class="string">'mac'</span>);
+  <span class="keyword">this</span>.string(<span class="string">'pass'</span>);
+  <span class="keyword">this</span>.timestamps();
+    
+});
+  
+Knoten.property(<span class="string">'number'</span>, <span class="string">'number'</span>, {
+  get: <span class="keyword">function</span>() {
+    <span class="keyword">return</span> parseInt(<span class="keyword">this</span>.properties.id);
+  }
+});
+  
+Knoten.property(<span class="string">'created_at'</span>, <span class="string">'number'</span>, {
+  get: <span class="keyword">function</span>() {
+    <span class="keyword">return</span> <span class="keyword">this</span>.properties.ctime;
+  }
+});
+  
+Knoten.property(<span class="string">'last_seen'</span>, <span class="string">'number'</span>, {
+  get: <span class="keyword">function</span>() {
+    <span class="keyword">return</span> <span class="keyword">this</span>.properties.mtime;
+  }
+});</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h2">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <h2>Resource: Network</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="keyword">var</span> Network = resources.Network = 
+resourceful.define(<span class="string">'network'</span>, <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
+    
+  <span class="keyword">this</span>.string(<span class="string">'name'</span>);
+  <span class="keyword">this</span>.number(<span class="string">'range_min'</span>);
+  <span class="keyword">this</span>.number(<span class="string">'range_max'</span>);
+  <span class="keyword">this</span>.number(<span class="string">'lease_days'</span>);
+  <span class="keyword">this</span>.timestamps();
+    
+});</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>export the resources as module</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>exports.resources = resources;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>export self as broadway plugin</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>exports.attach = <span class="function"><span class="keyword">function</span> <span class="params">(options)</span> {</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>attach resources to app</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">this</span>.resources = resources;
+
+};
+
+exports.init = <span class="function"><span class="keyword">function</span> <span class="params">(done)</span> {</span>
+  done();
+};</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
