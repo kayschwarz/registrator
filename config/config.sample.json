@@ -1,3 +1,14 @@
 {
-  "port": 3000
+  "name": "registrator",
+  "port": 8080,
+  "couch": {
+    "https": false,
+    "uri": "couchdb://couch.example.com",
+    "database": "dbname",
+    "port": "80",
+    "auth": {
+          "username": "me",
+          "password": "secret"
+        }
+  }
 }

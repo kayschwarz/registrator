@@ -6,7 +6,9 @@
   "dependencies": {
     "union": "0.3.x",
     "flatiron": "0.3.x",
-    "resourceful": "0.3.x"
+    "resourceful": "0.3.x",
+    "async": "0.2.x",
+    "bcrypt": "0.7.x"
   },
   "devDependencies": {
     "api-easy": "0.3.2",

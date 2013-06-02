@@ -5,13 +5,9 @@ FOREVER = forever
 # forever conf: watch for changes. if it does not survive for 1s, wait 5s.
 FRVR_CFG = --watch --minUptime 1000 --spinSleepTime 5000
 
-# couchdb "secrets"
-#COUCH_USER = user
-#COUCH_PASS = xxxx
-
 # ENV
-ENV = true # dont run it
-#ENV = export COUCH_USER=${COUCH_USER}; export COUCH_PASS=${COUCH_PASS}
+#ENV = true # dont run it
+ENV = export COUCH_USER=${COUCH_USER}; export COUCH_PASS=${COUCH_PASS}
 
 GIT_HASH = $(shell git log -1 --pretty=format:"%H")
 

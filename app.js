@@ -1,5 +1,6 @@
 var flatiron  = require('flatiron'),
     path      = require('path'),
+    async     = require('async'),
     app       = flatiron.app;
 
 // app: config
@@ -13,104 +14,311 @@ app.use(flatiron.plugins.http);
 // app: internal modules
 app.use(require("./lib/errors"));
 app.use(require("./lib/register"));
+app.use(require("./lib/model"), app.config.get('networks'));
 
-// # ROUTER
+// 
+// # EXTERNAL API
+// 
+// Functions calling the internal API and their HTTP routes 
+// (would have to be decoupled when supporting more interfaces).
+// 
+// Since routes except /home and /time need a `network` parameter, it is not further mentioned.
 
-// ## HOMEPAGE
+// 
+// ## HOMEPAGE: List all `networks`
+// 
+// - `GET /`
 app.router.get('/', function () {
+  // TODO: list networks
   this.res.json({ 'RTFM': 'https://github.com/eins78/registrator/' })
 });
 
-// ## LIST: GET /knoten
-var listAll = function (property) {
+// 
+// ## Get/List all `Knoten`
+// 
+var listAll = function (network, property) {
   
   var http = this,
       givenprops = [],
       properties = [];
   
-  givenprops.push(property);
-  ["properties", "property", "props", "prop"].forEach(function(key) {
-    givenprops = givenprops.concat(http.req.query[key]);
+  // ### `/$NETWORK/list/numbers`
+  // 
+  // if a property was given as **url resource**
+  if (!property) {
+    // add it to the list of given properties.
+    givenprops.push(property);    
+  };
+  
+  // ### support `/$NETWORK/list?prop=numbers&prop=mac`
+  // 
+  // for each of those *query parameters**, 
+  ["properties", "property", "props", "prop"].forEach(function(parameter) {
+    // also add it to the list if we got a **value** for it
+    givenprops = givenprops.concat(http.req.query[parameter]);
   });
   
+  // ### support `/$NETWORK/list?number=yes&mac=1`
+  // 
+  // for each of those *query parameters**, 
   ["number", "mac", "knoten"].forEach(function(prop) {
-    if (givenprops.indexOf(prop) !== -1 || givenprops.indexOf(prop + 's') !== -1) {
-      properties.push(prop);
-    }
+    
+    // FIXME: wtf? not needed?
+    // if (givenprops.indexOf(parameter) !== -1 || givenprops.indexOf(parameter + 's') !== -1) {
+      // properties.push(prop);
+    // }
+    
+    // if they are in the query (or their plural), 
     if (http.req.query[prop] || http.req.query[prop + 's']) {
+      
+      // and if the value is neither emty nor the string 'false', 
       if (http.req.query[prop] !== "false" || http.req.query[prop + 's'] !== "false") {
+        
+        // add the corresponding property to the list.
         properties.push(prop);        
       }
     }
   });
+  
+  // ### call register
+  // 
+  // call internal API, with the list properties we want (if we got some, otherwise it's empty)
+  // 
+  app.register.getAll(network, properties, function(err, res) {
     
-  app.register.getAll(properties, function(err, res) {
+    // and send the result of it as pretty JSON (or an error if there was one).
     http.res.end(JSON.stringify((err || res), null, 2));
   });
   
 };
 
-app.router.get('/knoten', listAll);
-app.router.get('/GET/knoten', listAll);
+// ### set up the routes calling `listAll()`
+// 
+// - `GET /$NETWORK/knoten`
+app.router.get('/:network/knoten', listAll);
+// - `GET /GET/$NETWORK/knoten`
+app.router.get('/GET/:network/knoten', listAll);
+// - `GET /$NETWORK/list?$PROPERTY=1`
+app.router.get('/:network/list', listAll);
+// - `GET /GET/$NETWORK/list?$PROPERTY=1`
+app.router.get('/GET/:network/list', listAll);
+// - `GET /$NETWORK/lists?$PROPERTY=1`
+app.router.get('/:network/lists', listAll);
+// - `GET /GET/$NETWORK/lists?$PROPERTY=1`
+app.router.get('/GET/:network/lists', listAll);
+// - `GET /$NETWORK/list/$PROPERTY`
+app.router.get('/:network/list/:property', listAll);
+// - `GET /GET/$NETWORK/list/$PROPERTY`
+app.router.get('/GET/:network/list/:property', listAll);
+// - `GET /$NETWORK/lists/$PROPERTY`
+app.router.get('/:network/lists/:property', listAll);
+// - `GET /GET/$NETWORK/lists/$PROPERTY`
+app.router.get('/GET/:network/lists/:property', listAll);
 
-app.router.get('/list/:property', listAll);
-app.router.get('/GET/list/:property', listAll);
-app.router.get('/lists/:property', listAll);
-app.router.get('/GET/lists/:property', listAll);
-
-// ## CHECK/INFO: GET /knoten/number
-var getKnoten = function (number) {
+// 
+// ## Get a `Knoten`
+// 
+var getKnoten = function (network, number) {
   var http = this;
   
-  app.register.get(number, function(err, res) {
+  // call the internal API, get a knoten by number
+  app.register.get(network, number, function(err, res) {
+    
+    // send the error or result as pretty JSON.
     http.res.end(JSON.stringify((err || res), null, 2));
   });
 };
 
-app.router.get('/knoten/:number', getKnoten);
-app.router.get('/GET/knoten/:number', getKnoten);
+// ### set up the routes calling `getKnoten()`
+// 
+// - `GET /$NETWORK/knoten/$NUMBER`
+app.router.get('/:network/knoten/:number', getKnoten);
+// - `GET /GET/$NETWORK/knoten/$NUMBER`
+app.router.get('/GET/:network/knoten/:number', getKnoten);
 
-// ## AUTOREGISTER: POST knoten, needs mac and pass
-var postKnoten = function () {
+// 
+// ## AUTOREGISTER: POST a `Knoten`
+// 
+// - needs mac and pass
+// - return a result with a `Knoten`
+// - new number is the smallest available, where 
+//   available means no db entry for this number
+// 
+var postKnoten = function (network) {
   var http = this, 
   
+  // read the request query parameters
   mac = http.req.query.mac || null,
   pass = http.req.query.pass || null;
   
-  app.register.create(mac, pass, function(err, res) {
+  // TODO: read JSON from request body
+  
+  // call the internal API, 
+  app.register.create(network, mac, pass, function(err, res) {
+    
+    // send the error or result as pretty JSON.
     http.res.end(JSON.stringify((err || res), null, 2));
   });
   
 };
 
-app.router.post('/knoten', postKnoten);
-app.router.get('/POST/knoten', postKnoten);
+// ### set up the routes calling `postKnoten()`
+// 
+// - `POST /$NETWORK/knoten/$NUMBER?mac=$MAC&pass=$PASS`
+app.router.post('/:network/knoten', postKnoten);
+// - `GET /POST/$NETWORK/knoten/$NUMBER?mac=$MAC&pass=$PASS`
+app.router.get('/POST/:network/knoten', postKnoten);
 
-// ## HEARTBEAT: PUT knoten/number, needs mac and pass
-// - special: if number has no pass, set to given pass
-var putKnoten = function (number) {
+// 
+// ## HEARTBEAT: PUT a `Knoten`
+// 
+// - needs mac and pass
+// - allow 'costum registration'
+// - allows to capture a 'reserved' number
+// - logic: if given number has no pass, set it to given pass
+// 
+var putKnoten = function (network, number) {
   var http = this,
   
+  // read the request query parameters
   mac = http.req.query.mac || null,
   pass = http.req.query.pass || null;
   number = number || null;
   
-  app.register.update(number, mac, pass, function(err, res) {
+  // TODO: read JSON from request body
+  
+  // call the internal API, 
+  app.register.update(network, number, mac, pass, function(err, res) {
+    
+    // send the error or result as pretty JSON.
     http.res.end(JSON.stringify((err || res), null, 2));
   });
   
 };
 
-app.router.put('/knoten/:number', putKnoten);
-app.router.get('/PUT/knoten/:number', putKnoten);
+// ### set up the routes calling `putKnoten()`
+// 
+// - `PUT /$NETWORK/knoten/$NUMBER?mac=$MAC&pass=$PASS`
+app.router.put('/:network/knoten/:number', putKnoten);
+// - `GET /PUT/$NETWORK/knoten/$NUMBER?mac=$MAC&pass=$PASS`
+app.router.get('/PUT/:network/knoten/:number', putKnoten);
 
-// ## TIMESTAMP: GET /time
+// 
+// ## TIMESTAMP
+// 
+// - `GET /time`
 var getTime = function () {
+  
+  // send the current timestamp as pretty JSON.
   this.res.end(JSON.stringify({ 'now': new Date().getTime() }, null, 2));
 };
 
 app.router.get('/time', getTime);
 app.router.get('/GET/time', getTime);
 
-// start http server on configured port
+
+// 
+// # STARTUP
+// 
+// - start app and http server on configured port
+// 
 app.start(app.config.get('port'));
+
+// 
+// ## Check Database, Check and Setup Networks
+//
+(function bootstrapDB () {
+
+  // - make tmp arrays
+  var networks = app.config.get('networks'),
+      configuredNetworks = [],
+      databasedNetworks = [];
+
+  // bootstrap() sets up network in db if it does not exist
+  var bootstrap = function (network, callback) {
+        
+    // add network to the tmp array
+    configuredNetworks.push(network.name);
+  
+    // check if it already exists in db.
+    app.resources.Network.get(network.name, function(err, res) {
+    
+      // If we got an error db error, we exit!
+      if (err && err.status > 500) {
+        throw new Error("DB error! Cannot run!")
+      }
+    
+      // If the network is not found, we create it.
+      else if (err && err.status === 404) {
+      
+        app.resources.Network.create({
+          id: network.name
+        }, function(err, network){
+  
+          if (err) {
+          
+            var msg = "could not create network" + network.name;
+            
+            app.log.error(msg, err);
+            callback(new Error(msg));
+            
+          } else {
+          
+            app.log.debug("created network!", network);
+            callback();
+          }
+        
+        });
+      
+      }
+      
+      // if we found the network and the id is correct
+      else if (!err && res.id === network.name) {
+        // just callback
+        callback();
+
+      } else {
+        // something is very wrong
+        callback(new Error("Network" + " is not " +  network.name + "!"))
+      }
+    
+    });
+  
+  };  
+  
+  // Run async setup for each of the networks 
+  // and run the self check after all of them completed.
+  async.each(networks, bootstrap, function(err) {
+        
+    if (err) {
+      app.log.error("DB Bootstrap failed!", err);
+    }
+    
+    Network.all(function(err, networksInDB) {
+    
+      // and for each network
+      if (networksInDB) {        
+        networksInDB.forEach(function(n) {
+      
+          // add it to the tmp list.
+          console.log(n.id)
+          databasedNetworks.push(n.id);
+        });
+      }
+
+      // debug: log configured and actual networks
+      app.log.debug(" networks configured:", configuredNetworks.sort().toString());
+      app.log.debug("networks in database:", databasedNetworks.sort().toString());
+    
+      // exit if they are not the same!
+      if ( configuredNetworks.sort().toString() !== databasedNetworks.sort().toString() ) {
+        app.log.error("Self-check: Networks are broken! :(");
+      } else {
+        app.log.info("self-check:", {'networks_ok': true})
+      }
+  
+    });
+    
+  });
+  
+})();
