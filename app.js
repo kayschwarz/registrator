@@ -279,7 +279,7 @@ app.start(app.config.get('port'));
 
       } else {
         // something is very wrong
-        callback(new Error("Network" + res.id + " is not " +  network.name + "!"))
+        callback(new Error("Network" + " is not " +  network.name + "!"))
       }
     
     });
@@ -291,18 +291,20 @@ app.start(app.config.get('port'));
   async.each(networks, bootstrap, function(err) {
         
     if (err) {
-      app.log.error("DB Bootstrap failed!");
+      app.log.error("DB Bootstrap failed!", err);
     }
     
     Network.all(function(err, networksInDB) {
     
       // and for each network
-      networksInDB.forEach(function(n) {
+      if (networksInDB) {        
+        networksInDB.forEach(function(n) {
       
-        // add it to the tmp list.
-        console.log(n.id)
-        databasedNetworks.push(n.id);
-      });
+          // add it to the tmp list.
+          console.log(n.id)
+          databasedNetworks.push(n.id);
+        });
+      }
 
       // debug: log configured and actual networks
       app.log.debug(" networks configured:", configuredNetworks.sort().toString());
