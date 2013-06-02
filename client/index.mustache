@@ -4,7 +4,7 @@
     <title>{{name}}> {{network.name}}</title>
 
     <!-- generic webapp shit-->
-    <link href='http://localhost:8000/style.css' rel='stylesheet' type='text/css'>
+    <link href='//eins78.github.com/appstrakt/style.css' rel='stylesheet' type='text/css'>
     <!-- registrator styles-->
     <link href='/static/style.css' rel='stylesheet' type='text/css'>
     
@@ -21,7 +21,7 @@
       
       <h3 class="lead">
         network: <kbd>{{name}}
-          <small><a href="{{url}}" title="{{name}} Website">
+          <small><a href="{{url}}" title="{{name}} Website" data-overide-link="true">
             <i class="icon-external-link">Link</i>
           </a></small>
         </kbd>
@@ -45,8 +45,9 @@
           </td>
           <td>
             <kbd>
-              <a href="/list/number" title="Numbers Listing">&#x2116;</a>, 
-              <a href="/list/mac" title="MAC Listing">MAC</a>
+              <a href="#" title="Numbers Listing" data-overide-link="true">TEST</a>, 
+              <a href="/list/number" title="Numbers Listing" data-overide-link="true">&#x2116;</a>, 
+              <a href="/list/mac" title="MAC Listing" data-overide-link="true">MAC</a>
             </kbd> 
           </td>
         </tr>

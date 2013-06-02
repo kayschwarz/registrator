@@ -3,10 +3,20 @@ $(function(){
   $('#console').tooltip({
     selector: "span[data-toggle=tooltip]"
   });
+  
+  // overide links
+  $('body a[data-overide-link=true]').on('click', modalLink);
+  
+  
   // $("body").tooltip();
   // $('body').on('.tooltip.data-api');
   console.log('tooltips!');
 });
+
+function modalLink (event) {
+  event.preventDefault();
+  console.log(event);
+}
 
 function renderLine (data, callback) {
   
@@ -15,6 +25,7 @@ function renderLine (data, callback) {
       output;
 
   map.class('event').to('event');
+  
   map.class('message').to('message');
   map.class('timestamp').to('timestamp');          
   map.class('knoten').to('knoten');          
@@ -25,7 +36,7 @@ function renderLine (data, callback) {
   
 };
     
-var socket = io.connect('http://localhost:3000');
+var socket = io.connect('http://localhost:50001');
 
 // when we receive a 'console' event,       
 socket.on('console', function (data) {

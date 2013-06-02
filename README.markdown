@@ -84,7 +84,7 @@ Returns an array of all registered knoten.
 - *Request method:* `GET`
 - *Parameters:* None
 - *Authentication:* None
-- *Example request:* `curl "http://reg.js.ars.is/knoten"`
+- *Example request:* `curl "http://reg.js.ars.is/testnet/knoten"`
 - *Example response:* 
     
     ```js
@@ -124,7 +124,7 @@ Returns an array of all registered knoten.
 - *Request method:* `POST`
 - *Parameters:* `MAC`, `PASS`
 - *Authentication:* None
-- *Example request:* `curl  "http://reg.js.ars.is/POST/knoten?mac=12345&pass=secret"`
+- *Example request:* `curl  "http://reg.js.ars.is/POST/testnet/knoten?mac=12345&pass=secret"`
 - *Example response:*
 
     ```js
@@ -151,7 +151,7 @@ If there is already a knoten with this number but no pass, it is a ["reserved"](
 - *Request method:* `PUT`
 - *Request Parameters:* `MAC`, `PASS`
 - *Authentication:* passphrase, if set
-- *Example request:* `curl "http://reg.js.ars.is/knoten/178?mac=caffee&pass=secret"`
+- *Example request:* `curl "http://reg.js.ars.is/PUT/testnet/knoten/178?mac=caffee&pass=secret"`
 - *Example response:*
 
     ```js

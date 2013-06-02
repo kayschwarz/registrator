@@ -22,9 +22,26 @@ app.use(flatiron.plugins.static, {
 
 // app: internal modules
 app.use(require("./lib/errors"));
-app.use(require("./lib/model"));
 app.use(require("./lib/register"));
+app.use(require("./lib/model"), app.config.get('networks'));
 
+
+// 
+// # EXTERNAL API
+// 
+// Functions calling the internal API and their HTTP routes 
+// (would have to be decoupled when supporting more interfaces).
+// 
+// Since routes except /home and /time need a `network` parameter, it is not further mentioned.
+
+// 
+// ## HOMEPAGE: List all `networks`
+// 
+// - `GET /`
+app.router.get('/', function () {
+  // TODO: list networks
+  this.res.json({ 'RTFM': 'https://github.com/eins78/registrator/' })
+});
 
 // # ROUTER
 
@@ -150,13 +167,17 @@ app.router.get('/', function () {
       data      = {};
   
   app.register.getAll(null, function(err, res) {
-
+    
+    if (!err) {
+      data.knoten = res.result.knoten;
+      data.knoten.sort(function(a,b){return b.last_seen - a.last_seen})
+    }
+    
     data.network = app.config.get('networks')[1];
     data.name = app.config.get('name');
-    data.knoten = res.result.knoten;
-
-    data.knoten.sort(function(a,b){return b.last_seen - a.last_seen})
-      
+    
+    app.log.debug("data", data);
+    
     stream = mu.compileAndRender(template, data);    
     util.pump(stream, http.res);
 
@@ -167,7 +188,6 @@ app.router.get('/', function () {
 // start http server on configured port
 app.start(app.config.get('port'));
 app.log.info("Server started!", { "port": app.config.get('port') })
-
 
 // Socket.io
 // 
@@ -183,21 +203,24 @@ io.sockets.on('connection', function(socket) {
   });
 
   app.resources.Knoten.on('update', function(doc) {
-      socket.emit('console', {
-        "event": "HEARTBEAT",
-        "message": null,
-        "knoten": doc.id,
-        "timestamp": (new Date().toJSON())
-      });
+    socket.emit('console', {
+      "event": "HEARTBEAT",
+      "message": null,
+      "knoten": doc.id,
+      "timestamp": (new Date().toJSON())
+    });
   });  
 
   app.resources.Knoten.on('save', function(doc) {
-      socket.emit('console', {
-        "event": "REGISTER",
-        "message": null,
-        "knoten": doc.id,
-        "timestamp": (new Date().toJSON())
-      });
+    
+    require('eyes').inspect(doc);
+    
+    socket.emit('console', {
+      "event": "REGISTER",
+      "message": null,
+      "knoten": doc.id,
+      "timestamp": (new Date().toJSON())
+    });
   });  
 
 });
