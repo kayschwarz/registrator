@@ -20,6 +20,12 @@ function modalLink (event) {
 
 function renderLine (data, callback) {
   
+  if (data.id) {
+    data.number = data.id.replace(/knoten\/network\/\w+\/(\d+)/, '$1');
+    data.network = data.network || "error";
+    data.knoten = '/GET/' + data.network + '/knoten/'+ data.number;  
+  }
+    
   var logentry = '<p class="logentry"><kbd class="timestamp label label-info" data-toggle="tooltip" title=""></kbd><kbd> <b class="event"></b>: </kbd><kbd class="message"></kbd><kbd><a class="knoten" href="#"></a></kbd></p>',    
       map = new Plates.Map(),
       output;
@@ -40,6 +46,8 @@ var socket = io.connect('http://localhost:50001');
 
 // when we receive a 'console' event,       
 socket.on('console', function (data) {
+  
+  console.log(data);
         
   // we run a jquery fn
   $(function() {

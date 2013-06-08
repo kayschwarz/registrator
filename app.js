@@ -330,7 +330,8 @@ io.sockets.on('connection', function(socket) {
     socket.emit('console', {
       "event": "HEARTBEAT",
       "message": null,
-      "knoten": doc.id,
+      "id": doc.id,
+      "network": doc.network_id,
       "timestamp": (new Date().toJSON())
     });
   });  
@@ -342,7 +343,8 @@ io.sockets.on('connection', function(socket) {
     socket.emit('console', {
       "event": "REGISTER",
       "message": null,
-      "knoten": doc.id,
+      "id": doc.id,
+      "network": doc.network_id,
       "timestamp": (new Date().toJSON())
     });
   });  
