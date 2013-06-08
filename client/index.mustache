@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>{{name}}> {{network.name}}</title>
+    <title>{{name}}> {{network}}</title>
 
     <!-- generic webapp shit-->
     <link href='//eins78.github.com/appstrakt/style.css' rel='stylesheet' type='text/css'>
@@ -84,7 +84,7 @@
         {{#knoten}}
         <tr id="knoten-nr-{{number}}">
           <td class="knoten-number">
-            <kbd><a href="/GET/knoten/{{number}}">
+            <kbd><a href="/GET/{{network}}/knoten/{{number}}">
               {{number}}
             </a></kbd>
           </td>

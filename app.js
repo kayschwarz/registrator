@@ -34,16 +34,44 @@ app.use(require("./lib/model"), app.config.get('networks'));
 // 
 // Since routes except /home and /time need a `network` parameter, it is not further mentioned.
 
-// 
-// ## HOMEPAGE: List all `networks`
-// 
-// - `GET /`
-app.router.get('/', function () {
-  // TODO: list networks
-  this.res.json({ 'RTFM': 'https://github.com/eins78/registrator/' })
-});
 
 // # ROUTER
+// 
+// ## HOMEPAGE
+app.router.get('/', function () {
+  var http = this,
+      network_id = "testnet",
+      data = {};
+
+  // TODO: list networks
+  
+  app.register.getAll(network_id, null, function(err, res) {
+ 
+    data.network = network_id;
+    data.name = app.config.get('name');
+    
+    if (res) {
+      data.knoten = res.result.knoten;      
+      data.knoten.sort(function(a,b){
+        return b.last_seen - a.last_seen;
+      });
+    } 
+       
+    app.renderWebsite(http, data);
+    
+ 
+  });  
+    
+});
+
+app.renderWebsite = function (http, data) {
+   
+  var template  = './client/index.mustache';
+  
+  stream = mu.compileAndRender(template, data);    
+  util.pump(stream, http.res);
+
+};
 
 // ## LIST: GET /knoten
 var listAll = function (network, property) {
