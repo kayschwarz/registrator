@@ -48,7 +48,7 @@ docs:
 	cp docs/${APP}.html docs/index.html
 	open docs/index.html
 
-docs-pub:
+docs-pub: docs
 	# !!! gh-pages clone needs to be in /docs!
 	cd docs; git add --all
 	cd docs; git commit -m "docs based on ${GIT_HASH}" && git push origin gh-pages
