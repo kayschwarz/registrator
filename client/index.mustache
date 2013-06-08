@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{name}}> {{network}}</title>
+
+    <!-- generic webapp shit-->
+    <link href='//eins78.github.com/appstrakt/style.css' rel='stylesheet' type='text/css'>
+    <!-- registrator styles-->
+    <link href='/static/style.css' rel='stylesheet' type='text/css'>
+    
+  </head>
+  <body>
+    
+    <header>
+      <h1><i class="icon-list-ol"></i> {{name}}</h1>
+    </header>
+
+    <section id="content">
+      {{#network}}
+      {{#active}}
+      
+      <h3 class="lead">
+        network: <kbd>{{name}}
+          <small><a href="{{url}}" title="{{name}} Website" data-overide-link="true">
+            <i class="icon-external-link">Link</i>
+          </a></small>
+        </kbd>
+      </h3>
+      
+      <table id="network" class="table table-condensed table-bordered golden-big">
+        <tr>
+          <th>range</th>
+          <th>lease days</th>
+          <th>listings</th>
+        </tr>
+        <tr>
+          <td>
+            <kbd>{{minimum}}..{{maximum}}</kbd> 
+          </td>
+          <td>
+            <kbd>
+              {{#lease_days}}{{lease_days}}{{/lease_days}}
+              {{^lease_days}}unknown!{{/lease_days}}
+            </kbd> 
+          </td>
+          <td>
+            <kbd>
+              <a href="#" title="Numbers Listing" data-overide-link="true">TEST</a>, 
+              <a href="/list/number" title="Numbers Listing" data-overide-link="true">&#x2116;</a>, 
+              <a href="/list/mac" title="MAC Listing" data-overide-link="true">MAC</a>
+            </kbd> 
+          </td>
+        </tr>
+      </table>
+      {{/active}}
+      {{/network}}
+      
+      <hr>
+      
+      <h4>
+        Activity
+        <button type="button" class="btn btn-link" data-toggle="collapse" data-target="#console-container">
+          <i class="icon icon-resize-small"></i>
+        </button>
+      </h4>
+      <div id="console-container" class="collapse">
+        <div id="console" class="well dark">
+      </div>
+      </div>
+      
+      <hr>
+            
+      <h4>Knoten</h4>
+      <table id="knoten-listing" class="table table-hover">
+        <tr>
+          
+          <th>&#x2116;</th>
+          <th>MAC</th>
+          <th>created at</th>
+          <th>last seen <i class="icon-angle-down">&#x21A7;</i></th>
+          
+        </tr>
+        
+        {{#knoten}}
+        <tr id="knoten-nr-{{number}}">
+          <td class="knoten-number">
+            <kbd><a href="/GET/{{network}}/knoten/{{number}}">
+              {{number}}
+            </a></kbd>
+          </td>
+          <td class="knoten-mac">
+            <kbd>{{mac}}</kbd>
+          </td>
+          <td class="knoten-created_at">
+            <kbd>{{created_at}}</kbd> 
+          </td> 
+          <td class="knoten-last_seen">
+           <kbd>{{last_seen}}</kbd> 
+          </td> 
+        </tr>
+        {{/knoten}}
+
+      </table>
+      
+    </section>
+    
+    <footer>
+      <kbd>{{name}}.js running on dev.</kbd>
+    </footer>
+    
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.min.js"></script>
+    
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/static/plates.js"></script>
+    <script src="/static/echtzeit.js"></script>
+    
+  </body>
+</html>
