@@ -40,10 +40,13 @@ dependencies:
 
 docs:
 	# generate doccs with docco
-	@# !!! docco needs to be installed!
-	docco ${APP}.js lib/*.js
+	# !!! docco needs to be installed!
+	docco ${APP}.js lib/*.js public/jquery-client.js
 	cp docs/${APP}.html docs/index.html
-	@# !!! gh-pages clone needs to be in /docs!
+	open docs/index.html
+
+docs-pub:
+	# !!! gh-pages clone needs to be in /docs!
 	cd docs; git add --all
 	cd docs; git commit -m "docs based on ${GIT_HASH}" && git push origin gh-pages
 	
