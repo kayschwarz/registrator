@@ -29,7 +29,7 @@ logs: # logs from backgound
 lint:
 	jslint --node --sloppy --white ${APP}.js *.js lib/*.js
 
-dependencies:
+deps:
 	# system-wide deps. only installed if not found in $PATH.
 	@command -v ${NODE} && echo "^ was found" || sudo apt-get install nodejs
 	@command -v npm && echo "^ was found" || sudo apt-get install npm
@@ -37,22 +37,21 @@ dependencies:
 	@command -v jslint && echo "^ was found" || sudo npm install -g jslint
 	# app deps (node_modules)
 	npm install
+	# appstrakt
+#	curl "eins78.github.io/appstrakt/base.css" > public/appstrakt.css
+#	curl "eins78.github.io/appstrakt/app.css" >> public/appstrakt.css
 
 docs:
 	# generate doccs with docco
-	@# !!! docco needs to be installed!
-	docco ${APP}.js lib/*.js
+	# !!! docco needs to be installed!
+	docco ${APP}.js lib/*.js public/jquery-client.js
 	cp docs/${APP}.html docs/index.html
-	@# !!! gh-pages clone needs to be in /docs!
+	open docs/index.html
+
+docs-pub: docs
+	# !!! gh-pages clone needs to be in /docs!
 	cd docs; git add --all
 	cd docs; git commit -m "docs based on ${GIT_HASH}" && git push origin gh-pages
 	
 	
-# shortcuts
-deps: dependencies
-
-s: start
-	
-l: logs
-
 .PHONY : docs

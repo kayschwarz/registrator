@@ -1,7 +1,10 @@
 var flatiron  = require('flatiron'),
+    fs        = require('fs'),
     path      = require('path'),
     async     = require('async'),
     app       = flatiron.app;
+    util      = require('util'),
+    mu        = require('mu2');
 
 // app: config
 app.config.file({ file: path.join(__dirname, 'config', 'config.json') });
@@ -10,6 +13,13 @@ app.config.file('networks', { file: path.join(__dirname, 'config', 'networks.jso
 
 // app: `http`, plugins
 app.use(flatiron.plugins.http);
+// "use" the `static` plugin, configure it to serve all available files in `./static` under http root (`/`).
+// example: `./client/css/style.css` -> `http://app.url/css/style.css`
+app.use(flatiron.plugins.static, {
+  dir: path.join(__dirname, 'client'),
+  path: "static"
+});   
+
 
 // app: internal modules
 app.use(require("./lib/errors"));
@@ -24,18 +34,46 @@ app.use(require("./lib/model"), app.config.get('networks'));
 // 
 // Since routes except /home and /time need a `network` parameter, it is not further mentioned.
 
+
+// # ROUTER
 // 
-// ## HOMEPAGE: List all `networks`
-// 
-// - `GET /`
+// ## HOMEPAGE
 app.router.get('/', function () {
+  var http = this,
+      network_id = "testnet",
+      data = {};
+
   // TODO: list networks
-  this.res.json({ 'RTFM': 'https://github.com/eins78/registrator/' })
+  
+  app.register.getAll(network_id, null, function(err, res) {
+ 
+    data.network = network_id;
+    data.name = app.config.get('name');
+    
+    if (res) {
+      data.knoten = res.result.knoten;      
+      data.knoten.sort(function(a,b){
+        return b.last_seen - a.last_seen;
+      });
+    } 
+       
+    app.renderWebsite(http, data);
+    
+ 
+  });  
+    
 });
 
-// 
-// ## Get/List all `Knoten`
-// 
+app.renderWebsite = function (http, data) {
+   
+  var template  = './client/index.mustache';
+  
+  stream = mu.compileAndRender(template, data);    
+  util.pump(stream, http.res);
+
+};
+
+// ## LIST: GET /knoten
 var listAll = function (network, property) {
   
   var http = this,
@@ -222,7 +260,97 @@ app.router.get('/GET/time', getTime);
 // 
 // - start app and http server on configured port
 // 
+// # Static files
+app.router.get("/static/:file", function (file) {
+  var http = this,
+      target;
+  
+  // serve module js from node_modules
+  if (file === "plates.js") {
+    target = path.join(__dirname, 'node_modules', 'plates', 'lib', 'plates.js');
+  } else {
+    target = path.join(__dirname, 'public', file);
+  }
+  
+  // read and send the target file
+  fs.readFile(target, function (err, data) {
+    if (err) {
+      http.res.writeHead(500);
+      return http.res.end('Error loading index.html');
+    }
+    http.res.writeHead(200);
+    http.res.end(data);
+  });
+});
+
+// ## HOMEPAGE
+app.router.get('/', function () {
+  
+  var http      = this,
+      template  = './client/index.mustache',
+      data      = {};
+  
+  app.register.getAll(null, function(err, res) {
+    
+    if (!err) {
+      data.knoten = res.result.knoten;
+      data.knoten.sort(function(a,b){return b.last_seen - a.last_seen})
+    }
+    
+    data.network = app.config.get('networks')[1];
+    data.name = app.config.get('name');
+    
+    app.log.debug("data", data);
+    
+    stream = mu.compileAndRender(template, data);    
+    util.pump(stream, http.res);
+
+  });  
+  
+});
+
+// start http server on configured port
 app.start(app.config.get('port'));
+app.log.info("Server started!", { "port": app.config.get('port') })
+
+// Socket.io
+// 
+var io = require('socket.io').listen(app.server);
+
+io.sockets.on('connection', function(socket) {
+  
+  socket.emit('console', {
+    "event": 'HELLO',
+    "message": 'socket.io connected!',
+    "knoten": null,
+    "timestamp": (new Date().toJSON())
+  });
+
+  app.resources.Knoten.on('update', function(doc) {
+    socket.emit('console', {
+      "event": "HEARTBEAT",
+      "message": null,
+      "id": doc.id,
+      "network": doc.network_id,
+      "timestamp": (new Date().toJSON())
+    });
+  });  
+
+  app.resources.Knoten.on('save', function(doc) {
+    
+    require('eyes').inspect(doc);
+    
+    socket.emit('console', {
+      "event": "REGISTER",
+      "message": null,
+      "id": doc.id,
+      "network": doc.network_id,
+      "timestamp": (new Date().toJSON())
+    });
+  });  
+
+});
+
 
 // 
 // ## Check Database, Check and Setup Networks
