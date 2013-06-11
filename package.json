@@ -12,7 +12,8 @@
     "mu2": "~0.5.19",
     "st": "~0.1.4",
     "socket.io": "~0.9.16",
-    "plates": "~0.4.8"
+    "plates": "~0.4.8",
+    "underscore": "~1.4.4"
   },
   "devDependencies": {
     "api-easy": "0.3.2",

@@ -4,6 +4,7 @@ var flatiron  = require('flatiron'),
     async     = require('async'),
     app       = flatiron.app;
     util      = require('util'),
+    _         = require('underscore'),
     mu        = require('mu2');
 
 // app: config
@@ -361,7 +362,80 @@ io.sockets.on('connection', function(socket) {
   var networks = app.config.get('networks'),
       configuredNetworks = [],
       databasedNetworks = [];
+      
+  var reserveKnoten = function (network, callback) {
+    console.log('reserving knoten: ', network.id);
+    // console.log('reserving knoten: ', network);
+    
+    var list = (_.where(networks, {"name": network.id}))[0].reserved;
+    
+    if (list) {
+      
+      // console.log("list: ", list);
+      
+      // reserve each knoten in **list**
+      async.eachSeries(list, function (nr, callback) {
+        
+        // get the network
+        Network.get(network.id, function(err, fNetwork) {
 
+          // - we get the result back from the db
+          if (err) {
+            callback(err);        
+          }
+      
+          else {
+                  
+            // console.log(nr);
+      
+            var knoten = { "id": nr }
+              
+            network.createKnoten(knoten, function (err, result) {
+      
+              // we get the result back from the db
+  
+              if (err) {
+                
+                // an error while creating means server error or conflict…
+
+                if (err.status === 409) {
+                  // we are ignoring the error if a number already is in db
+                  // TODO: check before creating…
+                  callback(null)
+                  
+                } else {
+                                    
+                  // everything else is a real error!
+                  app.log.debug("Error reserving knoten #" + nr + "!", err);
+                  callback(err);
+                  
+                }
+                
+              } else {
+                
+                // success!
+                app.log.debug("Reserved: ", knoten);
+                callback(null);
+                
+              }
+                
+            });
+        
+          }
+      
+        });
+        
+      }, function done(err) {
+        callback(null || err);
+      });
+            
+    } else {
+      // no **list**? just callback
+      callback();
+    }
+    
+  };
+  
   // bootstrap() sets up network in db if it does not exist
   var bootstrap = function (network, callback) {
         
@@ -369,11 +443,11 @@ io.sockets.on('connection', function(socket) {
     configuredNetworks.push(network.name);
   
     // check if it already exists in db.
-    app.resources.Network.get(network.name, function(err, res) {
+    app.resources.Network.get(network.name, function(err, fNetwork) {
     
       // If we got an error db error, we exit!
       if (err && err.status > 500) {
-        throw new Error("DB error! Cannot run!")
+        throw new Error("DB error! Cannot run! " + err);
       }
     
       // If the network is not found, we create it.
@@ -381,7 +455,7 @@ io.sockets.on('connection', function(socket) {
       
         app.resources.Network.create({
           id: network.name
-        }, function(err, network){
+        }, function(err, cNetwork){
   
           if (err) {
           
@@ -392,8 +466,10 @@ io.sockets.on('connection', function(socket) {
             
           } else {
           
-            app.log.debug("created network!", network);
-            callback();
+            app.log.debug("created network!", cNetwork);
+            
+            // reservation in the created network
+            reserveKnoten(cNetwork, callback);
           }
         
         });
@@ -401,13 +477,14 @@ io.sockets.on('connection', function(socket) {
       }
       
       // if we found the network and the id is correct
-      else if (!err && res.id === network.name) {
-        // just callback
-        callback();
+      else if (!err && fNetwork.id === network.name) {
+        
+        // just reserve in the found network
+        reserveKnoten(fNetwork, callback);
 
       } else {
         // something is very wrong
-        callback(new Error("Network" + " is not " +  network.name + "!"))
+        callback(new Error("Network" + fNetwork + " is not " +  network.name + "!"))
       }
     
     });
@@ -431,6 +508,7 @@ io.sockets.on('connection', function(socket) {
           // add it to the tmp list.
           console.log(n.id)
           databasedNetworks.push(n.id);
+          
         });
       }
 
