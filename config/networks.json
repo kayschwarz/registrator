@@ -6,7 +6,9 @@
       "url": "http://github.com/eins78/registrator",
       "minimum": 2,
       "maximum": 1000,
-      "lease_days": 30
+      "lease_days": 30,
+      "reserved": [ 178
+      ]
     },
     {
       "name": "ffweimar",
