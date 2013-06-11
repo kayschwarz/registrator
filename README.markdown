@@ -25,9 +25,22 @@ The API is browser-, `curl`-, `wget`- and scripting-friendly:
     ```js
     {
       "number": 178,
-      "mac": "90f652c79eb0",
+      "ntwork_id_": "testnet",
+      "mac": "90f652c79eb0",        // optional, defeats double-registration, is validated
       "pass": "yoursecret",         // never returned by API!
+      "created_at": 1361993339696   // set internally on registration!
       "last_seen": 1361993339696    // set by sending 'heartbeat' to API!
+    }
+    ```
+
+- This is a ***"reserved"*** `knoten`:
+
+    ```js
+    {
+      "number": 178,                // this number is reserved. it was created internally on startup.
+      "ntwork_id_": "testnet",      // in the networks.config, every net can have a "reserved" array ( like [178])
+      "pass": "yoursecret",         // "reserved" knoten have no pass - anyone can set it!
+      (…)
     }
     ```
 
