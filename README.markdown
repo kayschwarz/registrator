@@ -247,6 +247,16 @@ curl "http://reg.js.ars.is/PUT/knoten/$MYNUMBER?mac=$MAC&pass=$PASS"
 DB entry with just number, but no mac and pass? It's a "reserved" number. It won't be assigned by autoregistration, but anyone can capture the number by sending a valid `heartbeat`.
 This enables smooth migration from [existing networks](https://github.com/eins78/registrator/blob/master/weimarnetz.json).
 
+### How to mass import existing Knoten
+
+To ["reserve"](#reservations) existing numbers, you could import these Knoten directly to the database:
+
+```sh
+KNOTEN="1 2 3 4 5" 
+NETWORK="YourNetworkName"
+for NUMBER in $KNOTEN; do curl -X POST -H 'Content-Type: application/json' -d "{ \"_id\": \"knoten/network/$NETWORK/$NUMBER\", \"network_id\": \"$NETWORK\", \"resource\": \"knoten\"}"  http://user:passwd@localhost:5984/registrator; done
+```
+
 ### Lease time
 
 - numbers "last_seen" more than 30 days ago are purged from the db?
