@@ -8,6 +8,7 @@ var flatiron  = require('flatiron'),
     mu        = require('mu2');
 
 // app: config
+app.config.argv();
 app.config.file({ file: path.join(__dirname, 'config', 'config.json') });
 // app: networks config
 app.config.file('networks', { file: path.join(__dirname, 'config', 'networks.json') });
@@ -285,8 +286,11 @@ app.router.get("/static/:file", function (file) {
 });
 
 // start http server on configured port
-app.start(app.config.get('port'));
-app.log.info("Server started!", { "port": app.config.get('port') });
+app.start(app.config.get('port'), function () {
+  app.log.info("Server started!", 
+    { "port": app.config.get('port') }
+  );
+});
 
 // Socket.io
 // 
@@ -325,6 +329,28 @@ io.sockets.on('connection', function(socket) {
   });  
 
 });
+
+
+//
+// ## On-Demand
+//
+// - log to file
+app.logfile = app.config.get('logfile');
+if (app.logfile && typeof app.logfile !== "boolean") {
+
+  console.log("YOOOOOOOOOOOOOOOOOOOOOOOOOOO")
+  app.log = require('winston');
+  app.log.cli();
+  
+  app.log.add(app.log.transports.File, {
+    filename: app.config.get('logfile'),
+    level: 'debug',
+    colorize: false,
+    timestampe: true,
+    json: false
+  });
+  
+}
 
 
 // 
