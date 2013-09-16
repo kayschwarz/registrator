@@ -41,7 +41,7 @@ app.use(require("./lib/model"), app.config.get('networks'));
 // ## HOMEPAGE
 app.router.get('/', function () {
   var http = this,
-      network_id = "testnet",
+      network_id = "ffweimar",
       data = {};
 
   // TODO: list networks
