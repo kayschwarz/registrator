@@ -338,7 +338,6 @@ io.sockets.on('connection', function(socket) {
 app.logfile = app.config.get('logfile');
 if (app.logfile && typeof app.logfile !== "boolean") {
 
-  console.log("YOOOOOOOOOOOOOOOOOOOOOOOOOOO")
   app.log = require('winston');
   app.log.cli();
   
