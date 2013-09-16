@@ -2,7 +2,7 @@ var flatiron  = require('flatiron'),
     fs        = require('fs'),
     path      = require('path'),
     async     = require('async'),
-    app       = flatiron.app;
+    app       = flatiron.app,
     util      = require('util'),
     _         = require('underscore'),
     mu        = require('mu2');
@@ -69,7 +69,7 @@ app.renderWebsite = function (http, data) {
    
   var template  = './client/index.mustache';
   
-  stream = mu.compileAndRender(template, data);    
+  var stream = mu.compileAndRender(template, data);    
   util.pump(stream, http.res);
 
 };
@@ -87,7 +87,7 @@ var listAll = function (network, property) {
   if (!property) {
     // add it to the list of given properties.
     givenprops.push(property);    
-  };
+  }
   
   // ### support `/$NETWORK/list?prop=numbers&prop=mac`
   // 
@@ -284,35 +284,9 @@ app.router.get("/static/:file", function (file) {
   });
 });
 
-// ## HOMEPAGE
-app.router.get('/', function () {
-  
-  var http      = this,
-      template  = './client/index.mustache',
-      data      = {};
-  
-  app.register.getAll(null, function(err, res) {
-    
-    if (!err) {
-      data.knoten = res.result.knoten;
-      data.knoten.sort(function(a,b){return b.last_seen - a.last_seen})
-    }
-    
-    data.network = app.config.get('networks')[1];
-    data.name = app.config.get('name');
-    
-    app.log.debug("data", data);
-    
-    stream = mu.compileAndRender(template, data);    
-    util.pump(stream, http.res);
-
-  });  
-  
-});
-
 // start http server on configured port
 app.start(app.config.get('port'));
-app.log.info("Server started!", { "port": app.config.get('port') })
+app.log.info("Server started!", { "port": app.config.get('port') });
 
 // Socket.io
 // 
