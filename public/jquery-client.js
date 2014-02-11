@@ -34,6 +34,17 @@
     
   // ## Functions
   // 
+  // ## Setup
+  // 
+  // Usage: `FFReg.setup({ "BaseURL": "http://reg.weimarnetz.de/", "network": "testnet" });`
+  FFReg.setup = function (userconfig) {
+    console.log(userconfig);
+    Object.keys(userconfig).forEach(function(key) {
+      config[key] = userconfig[key];
+    });
+    return "ok";
+  }
+  // 
   // ### Check
   // 
   // A function to check a **number** against the *Registrator*.
