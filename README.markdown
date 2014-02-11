@@ -203,40 +203,40 @@ Just a timestamp from the server. If we do our own `DHCP`, why not `NTP` as well
 # alias curl=wget
     
 # register a new knoten
-MAC="1a2b3c4d5e6f7a8b9c"; PASS="mysecr3t"
-curl "http://reg.js.ars.is/POST/knoten?mac=$MAC&pass=$PASS"
+MAC="02caffeebabe"; PASS="mysecr3t"
+curl "http://reg.js.ars.is/POST/testnet/knoten?mac=$MAC&pass=$PASS"
 # > {"status":200,"msg":"ok","result":{"number":56,"mac":"1a2b3c4d5e6f7a8b9c","last_seen":1362248264834}}
 
 # lets pretend the router lost power/connection/foo
 # and did not get the answer. what happens?
 # we send it again:
-curl "http://reg.js.ars.is/POST/knoten?mac=$MAC&pass=$PASS"
+curl "http://reg.js.ars.is/POST/testnet/knoten?mac=$MAC&pass=$PASS"
 # > {"status":303,"msg":"MAC already registered!","result":{"location":"/knoten/56","number":"56","mac":"1a2b3c4d5e6f7a8b9c"}}
 
 # that is good for scripting. you can ignore the status 
 # since you will always get a valid "result" if possible.
 # example: 
 MAC="anewmac12345678"; PASS="mysecr3t2"
-curl "http://reg.js.ars.is/POST/knoten?mac=$MAC&pass=$PASS" | jq ".result.number"
+curl "http://reg.js.ars.is/POST/testnet/knoten?mac=$MAC&pass=$PASS" | jq ".result.number"
 # > 58
 # (we do it again and get the same 303 error as before. but jq output the same info)
-curl "http://reg.js.ars.is/POST/knoten?mac=$MAC&pass=$PASS" | jq ".result.number"
+curl "http://reg.js.ars.is/POST/testnet/knoten?mac=$MAC&pass=$PASS" | jq ".result.number"
 # > 58
     
 # same goes for the heartbeat
     
 # first, save our own number if we don't know yet or don't have one
-MYNUMBER=$(curl "http://reg.js.ars.is/POST/knoten?mac=$MAC&pass=$PASS" | jq ".result.number")
+MYNUMBER=$(curl "http://reg.js.ars.is/POST/testnet/knoten?mac=$MAC&pass=$PASS" | jq ".result.number")
 echo $MYNUMBER
 # > 58
     
 # now send heartbeat
-curl "http://reg.js.ars.is/PUT/knoten/$MYNUMBER?mac=$MAC&pass=$PASS"
+curl "http://reg.js.ars.is/PUT/testnet/knoten/$MYNUMBER?mac=$MAC&pass=$PASS"
 # > {"status":200,"msg":"ok","result":{"number":"58","mac":"anewmac12345678","last_seen":1362248708614}}
 # does not matter how often you send it
-curl "http://reg.js.ars.is/PUT/knoten/$MYNUMBER?mac=$MAC&pass=$PASS"
+curl "http://reg.js.ars.is/PUT/testnet/knoten/$MYNUMBER?mac=$MAC&pass=$PASS"
 # > {"status":200,"msg":"ok","result":{"number":"58","mac":"anewmac12345678","last_seen":1362248714726}}
-curl "http://reg.js.ars.is/PUT/knoten/$MYNUMBER?mac=$MAC&pass=$PASS"
+curl "http://reg.js.ars.is/PUT/testnet/knoten/$MYNUMBER?mac=$MAC&pass=$PASS"
 # > {"status":200,"msg":"ok","result":{"number":"58","mac":"anewmac12345678","last_seen":1362248716503}}
 ```
 
