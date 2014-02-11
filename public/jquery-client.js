@@ -98,9 +98,6 @@
   // A function to get a **fresh number** from the *Registrator* (aka registration). Needs a MAC and a secret(!), otherwise we won't know who the registration is for…
   FFReg.register = function (mac, secret, callback) {
     
-    // http://reg.js.ars.is/POST/testnet/knoten?mac=a&pass=a
-    // http://reg.weimarnetz.de/POST/testnet/knoten?mac=a&pass=a
-    
     // Register MAC and Secret with *Registrator* using `JQuery.ajax()`.
     var URL = config.BaseURL + "POST/" + config.network + "/knoten";
     
