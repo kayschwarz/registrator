@@ -42,7 +42,7 @@ app.use(require("./lib/model"), app.config.get('networks'));
 // ## HOMEPAGE
 app.router.get('/', function () {
   var http = this,
-      network_id = "ffweimar",
+      network_id = app.config.get('homepage:network'),
       data = {};
 
   // TODO: list networks
