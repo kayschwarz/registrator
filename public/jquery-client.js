@@ -1,6 +1,10 @@
 // # REGISTRATOR client (jquery)
 
-  // > Structure loosely based on [underscore](http://underscorejs.org/docs/underscore.html)
+// This code is *very* verbose, because it tries to teach
+// the reader about how the `registrator` works as well.
+
+// > Structure loosely based on [underscore](http://underscorejs.org/docs/underscore.html)
+
 (function() {
   
   var root = this,
@@ -9,38 +13,47 @@
   
   // First, config object (JSON): 
   config = {
-    "BaseURL": "http://reg.weimarnetz.de/ffweimar"
+    "BaseURL": "http://reg.weimarnetz.de/",
+    "network": "ffweimar"
   },
   
   // Everything is encapsulated into the `FFReg` object, which will be attached to `global` later.
   FFReg = {
-    "VERSION": "0.0.0"
+    "VERSION": "0.0.1"
   };
+  
+  // Check for and set up JQuery
+  if (!window.$) {
+    console.log("FFReg: no JQuery!");
+    return;          
+  } else {
+    var JQuery = window.$;
+  }
+  
     
     
   // ## Functions
+  // 
+  // ## Setup
+  // 
+  // Usage: `FFReg.setup({ "BaseURL": "http://reg.weimarnetz.de/", "network": "testnet" });`
+  FFReg.setup = function (userconfig) {
+    console.log(userconfig);
+    Object.keys(userconfig).forEach(function(key) {
+      config[key] = userconfig[key];
+    });
+    return "ok";
+  }
   // 
   // ### Check
   // 
   // A function to check a **number** against the *Registrator*.
   FFReg.check = function (number, callback) {
     
-    // First, some sanity checks
-    if (!number) {
-      console.log("FFReg.check(): no number to check!");
-      return;
-    }
-
-    if (!window.$) {
-      console.log("FFReg.check(): no JQuery!");
-      return;          
-    } else {
-      // set up JQuery
-      var JQuery = window.$;
-    }
-    
     // If all is well, get the **number**'s status from *Registrator* with `JQuery.ajax()`.
-    jQuery.ajax(config.BaseURL + "/knoten/" + number, {
+    var URL = config.BaseURL + config.network + "/knoten/" + number;
+    
+    jQuery.ajax(URL, {
       
       // When the request completes, 
       complete: function complete(jqXHR, textStatus) {
@@ -67,6 +80,41 @@
           answer.free = null;
           answer.result = "WTF:" + JSON.stringify(answer.data);
         }
+        
+        // We log the data and result to the console, 
+        console.log(JSON.stringify(answer));
+        
+        // and call back with the same answer.
+        if (typeof callback === 'function') {
+          callback(answer);                  
+        }
+      }
+    });
+
+  };
+  
+  // ### Register
+  // 
+  // A function to get a **fresh number** from the *Registrator* (aka registration). Needs a MAC and a secret(!), otherwise we won't know who the registration is for…
+  FFReg.register = function (mac, secret, callback) {
+    
+    // Register MAC and Secret with *Registrator* using `JQuery.ajax()`.
+    var URL = config.BaseURL + "POST/" + config.network + "/knoten";
+    
+    jQuery.ajax(URL, {
+      
+      // data (appended as query string by jquery)
+      data: { "mac": mac, "pass": secret},
+      
+      // When the request completes, 
+      complete: function complete(jqXHR, textStatus) {
+        
+        // get the received data
+        var answer = {
+          "textStatus": textStatus,
+          "data": JSON.parse(jqXHR.responseText),
+        }
+        answer.result = JSON.stringify(answer.data);
         
         // We log the data and result to the console, 
         console.log(JSON.stringify(answer));
