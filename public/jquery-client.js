@@ -19,7 +19,7 @@
   
   // Everything is encapsulated into the `FFReg` object, which will be attached to `global` later.
   FFReg = {
-    "VERSION": "0.0.0"
+    "VERSION": "0.0.1"
   };
   
   // Check for and set up JQuery
@@ -80,6 +80,44 @@
           answer.free = null;
           answer.result = "WTF:" + JSON.stringify(answer.data);
         }
+        
+        // We log the data and result to the console, 
+        console.log(JSON.stringify(answer));
+        
+        // and call back with the same answer.
+        if (typeof callback === 'function') {
+          callback(answer);                  
+        }
+      }
+    });
+
+  };
+  
+  // ### Register
+  // 
+  // A function to get a **fresh number** from the *Registrator* (aka registration). Needs a MAC and a secret(!), otherwise we won't know who the registration is for…
+  FFReg.register = function (mac, secret, callback) {
+    
+    // http://reg.js.ars.is/POST/testnet/knoten?mac=a&pass=a
+    // http://reg.weimarnetz.de/POST/testnet/knoten?mac=a&pass=a
+    
+    // Register MAC and Secret with *Registrator* using `JQuery.ajax()`.
+    var URL = config.BaseURL + "POST/" + config.network + "/knoten";
+    
+    jQuery.ajax(URL, {
+      
+      // data (appended as query string by jquery)
+      data: { "mac": mac, "pass": secret},
+      
+      // When the request completes, 
+      complete: function complete(jqXHR, textStatus) {
+        
+        // get the received data
+        var answer = {
+          "textStatus": textStatus,
+          "data": JSON.parse(jqXHR.responseText),
+        }
+        answer.result = JSON.stringify(answer.data);
         
         // We log the data and result to the console, 
         console.log(JSON.stringify(answer));
