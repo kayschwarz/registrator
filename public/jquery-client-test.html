@@ -10,8 +10,24 @@
   <body class="container">
     <h1 class="page-header">registrator-jquery-client-test</h1>
     
-      To setup for different network, use <b>FFReg.setup({ "BaseURL": "http://reg.js.ars.is/", "network": "testnet" });</b>
     <aside id="config">
+      <h2 class="page-header">config</h2>
+      <div class="alert alert-success" style="display: none;">
+        <button type="button" class="close">&times;</button>
+        <strong>Set Config!</strong>
+      </div>
+      <form>
+        <label for="url">BaseURL: </label> <input type="text" name="url" value="" id="url" size="40">
+        <br>
+        <label for="network">network: </label> <input type="text" name="network" value="" id="network" size="40">
+        <br>
+        <button class="btn btn-default" type="button" id="setConfig">set config</button>
+      </form>
+      
+      <br>
+      
+      <small>To setup in js, use: <br><b><code>FFReg.setup({ "BaseURL": "http://reg.js.ars.is/", "network": "testnet" });</code></b></small>
+      
     </aside>
 
     <section id="tests">
@@ -36,6 +52,23 @@
     <script type="text/javascript">
     $(function () {
       
+      // put config in UI
+      var config = FFReg.setup();
+      $('#config').find('#url').val(config.BaseURL);
+      $('#config').find('#network').val(config.network);
+      
+      // what happens if we click 'set config':
+      $('#setConfig').on('click', function () {
+        var res = FFReg.setup({
+          "BaseURL": $('#config').find('#url').val(),
+          "network": $('#config').find('#network').val()
+        });
+        console.log(res);
+        if (res === "ok") {
+          $('#config').find('.alert').show();
+        }
+      });
+      
       // what happens if we click 'check':
       $('#check').on('click', function () {
         // get the number from the field
@@ -51,15 +84,23 @@
         var secret = $('#secret').val();
         console.log("test: trying to register with MAC:%s and scret:%s", mac, secret);
         // client: do a registration
-        FFReg.register(mac, secret, showInConsole);
-      })
+        FFReg.register(mac, secret, function (data) {
+          showInConsole(data);
+        });
+      });
       
+      // alert close button
+      $('.alert').find('.close').on('click', function () {
+        $(this).parents().find('.alert').hide();
+      });
       
     });
     
     // function for log output in textarea
     function showInConsole(data) {
-      $('#console').append(data.result+'\n');
+      if (data && data.result) {
+        $('#console').append(data.result+'\n');
+      }
     }
     </script>
     
