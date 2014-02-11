@@ -277,8 +277,8 @@ app.router.get("/static/:file", function (file) {
   // read and send the target file
   fs.readFile(target, function (err, data) {
     if (err) {
-      http.res.writeHead(500);
-      return http.res.end('Error loading index.html');
+      http.res.writeHead(404);
+      return http.res.end('Error 404');
     }
     http.res.writeHead(200);
     http.res.end(data);
