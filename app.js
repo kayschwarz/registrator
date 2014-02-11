@@ -295,6 +295,7 @@ app.start(app.config.get('port'), function () {
 // Socket.io
 // 
 var io = require('socket.io').listen(app.server);
+io.set('log level', 1); // reduce logging
 
 io.sockets.on('connection', function(socket) {
   
