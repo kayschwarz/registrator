@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">    <script src="http://code.jquery.com/jquery-1.10.2.min.js" type="text/javascript"></script>
+    <script src="http://reg.weimarnetz.de/static/jquery-client.js" type="text/javascript"></script>
+    <style type="text/css" media="screen">
+    * { font-family: monospace; }
+    </style>
+  </head>
+  <body>
+    <h1>registrator-client-test <small>(weimarnetz)</small></h1>
+    
+    <h2>check()</h2>
+    <input type="text" name="wishnumber" value="178" id="checknumber">
+    <button type="button" id="check">check number</button>
+        
+    <hr>
+    
+    <h3>Console <small>(only results, also check browser console for errors…)</small></h3>
+    <textarea disabled name="console" value="console" id="console"  rows="10" cols="80"></textarea>
+    
+    <script type="text/javascript">
+    $(function () {
+      
+      // what happens if we click 'check':
+      $('#check').on('click', function () {
+        var num = parseInt($('#checknumber').val(), 0);
+        FFReg.check(num, showInConsole)
+      })
+      
+    });
+    
+    // function for log output in textarea
+    function showInConsole(data) {
+      $('#console').append(data.result+'\n');
+    }
+    </script>
+    
+  </body>
+</html>
