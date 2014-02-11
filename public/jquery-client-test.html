@@ -4,29 +4,33 @@
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">    <script src="http://code.jquery.com/jquery-1.10.2.min.js" type="text/javascript"></script>
     <script src="jquery-client.js" type="text/javascript"></script>
     <style type="text/css" media="screen">
-    * { font-family: monospace; }
+    #config form { font-family: monospace; }
     </style>
   </head>
-  <body>
-    <h1>registrator-client-test <small>(weimarnetz)</small></h1>
+  <body class="container">
+    <h1 class="page-header">registrator-jquery-client-test</h1>
     
-    <aside>
       To setup for different network, use <b>FFReg.setup({ "BaseURL": "http://reg.js.ars.is/", "network": "testnet" });</b>
+    <aside id="config">
     </aside>
+
+    <section id="tests">
+      
+      <h2 class="page-header">tests</h2>
     
-    <h2>check()</h2>
-    <input type="text" name="wishnumber" value="178" id="checknumber">
-    <button type="button" id="check">check number</button>
+      <h3>check()</h3>
+      <input type="text" name="checknumber" value="178" id="checknumber">
+      <button class="btn btn-default" type="button" id="check">check number</button>
         
-    <h2>register()</h2>
-    <input type="text" name="mac" value="MAC" id="mac">
-    <input type="text" name="secret" value="secret" id="secret">
-    <button type="button" id="register">register</button>
-    <input disabled type="text" name="newnumber" value="" id="newnumber">
-        
-    <hr>
+      <h3>register()</h3>
+      <input type="text" name="mac" value="MAC" id="mac">
+      <input type="text" name="secret" value="secret" id="secret">
+      <button class="btn btn-default" type="button" id="register">register</button>
+      <input disabled type="text" name="newnumber" value="" id="newnumber">
     
-    <h3>Console <small>(only results, also check browser console for errors…)</small></h3>
+    </section>
+    
+    <h2 class="page-header">Console <small>(only results, also check browser console for errors…)</small></h3>
     <textarea disabled name="console" value="console" id="console"  rows="10" cols="80"></textarea>
     
     <script type="text/javascript">
@@ -38,7 +42,7 @@
         var num = parseInt($('#checknumber').val(), 0);
         // client: do a check
         FFReg.check(num, showInConsole);
-      })
+      });
       
       // what happens if we click 'register':
       $('#register').on('click', function () {
@@ -59,5 +63,7 @@
     }
     </script>
     
+    <!-- stylesheet last, so it loads when offline -->
+    <link rel="stylesheet" type="text/css" href="http://code.178.is/bootstrap-theme-freifunk/dist/css/bootstrap.min.css">
   </body>
 </html>
