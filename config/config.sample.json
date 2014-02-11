@@ -1,5 +1,10 @@
 {
   "name": "registrator",
+  
+  "homepage": {
+    "network": "ffweimar"
+  },
+  
   "port": 8080,
   "couch": {
     "https": false,
