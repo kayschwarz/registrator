@@ -18,7 +18,8 @@
   },
   "devDependencies": {
     "api-easy": "0.3.2",
-    "vows": "0.6.x"
+    "vows": "0.6.x",
+    "jslint": "~0.2.11"
   },
   "scripts": {
     "test": "vows --spec",
