@@ -10,9 +10,20 @@
   <body>
     <h1>registrator-client-test <small>(weimarnetz)</small></h1>
     
+    <aside>
+      Use <b>FFReg.setup({ "BaseURL": "http://reg.weimarnetz.de/", "network": "testnet" });</b><br>
+      or <b>FFReg.setup({ "BaseURL": "http://reg.js.ars.is/", "network": "testnet" });</b>
+    </aside>
+    
     <h2>check()</h2>
     <input type="text" name="wishnumber" value="178" id="checknumber">
     <button type="button" id="check">check number</button>
+        
+    <h2>register()</h2>
+    <input type="text" name="mac" value="MAC" id="mac">
+    <input type="text" name="secret" value="secret" id="secret">
+    <button type="button" id="register">register</button>
+    <input disabled type="text" name="newnumber" value="" id="newnumber">
         
     <hr>
     
@@ -24,9 +35,22 @@
       
       // what happens if we click 'check':
       $('#check').on('click', function () {
+        // get the number from the field
         var num = parseInt($('#checknumber').val(), 0);
-        FFReg.check(num, showInConsole)
+        // client: do a check
+        FFReg.check(num, showInConsole);
       })
+      
+      // what happens if we click 'register':
+      $('#register').on('click', function () {
+        // get the data from the fields
+        var mac = $('#mac').val();
+        var secret = $('#secret').val();
+        console.log("test: trying to register with MAC:%s and scret:%s", mac, secret);
+        // client: do a registration
+        FFReg.register(mac, secret, showInConsole);
+      })
+      
       
     });
     
