@@ -42,7 +42,7 @@ app.use(require("./lib/model"), app.config.get('networks'));
 // ## HOMEPAGE
 app.router.get('/', function () {
   var http = this,
-      network_id = "ffweimar",
+      network_id = app.config.get('homepage:network'),
       data = {};
 
   // TODO: list networks
@@ -277,8 +277,8 @@ app.router.get("/static/:file", function (file) {
   // read and send the target file
   fs.readFile(target, function (err, data) {
     if (err) {
-      http.res.writeHead(500);
-      return http.res.end('Error loading index.html');
+      http.res.writeHead(404);
+      return http.res.end('Error 404');
     }
     http.res.writeHead(200);
     http.res.end(data);
@@ -295,6 +295,7 @@ app.start(app.config.get('port'), function () {
 // Socket.io
 // 
 var io = require('socket.io').listen(app.server);
+io.set('log level', 1); // reduce logging
 
 io.sockets.on('connection', function(socket) {
   

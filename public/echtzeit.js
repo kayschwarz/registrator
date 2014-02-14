@@ -42,7 +42,7 @@ function renderLine (data, callback) {
   
 };
     
-var socket = io.connect('http://localhost:50001');
+var socket = io.connect(document.location.href);
 
 // when we receive a 'console' event,       
 socket.on('console', function (data) {

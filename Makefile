@@ -2,6 +2,8 @@
 NODE = nodejs
 APP = app
 FOREVER = forever
+LINT = node_modules/jslint/bin/jslint.js
+
 # forever conf: watch for changes. if it does not survive for 1s, wait 5s.
 FRVR_CFG = --watch --minUptime 1000 --spinSleepTime 5000
 
@@ -27,7 +29,7 @@ logs: # logs from backgound
 	@${ENV} && ${FOREVER} logs ${APP}.js
 
 lint:
-	jslint --node --sloppy --white ${APP}.js *.js lib/*.js
+	${LINT} --devel --node --sloppy --white --vars --nomen ${APP}.js *.js lib/*.js
 
 deps:
 	# system-wide deps. only installed if not found in $PATH.
