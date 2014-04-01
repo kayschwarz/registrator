@@ -17,6 +17,8 @@ The API is browser-, `curl`-, `wget`- and scripting-friendly:
 - `JSON`-only
 - instead of `HTTP` verbs and parameters, we use simple paths (i.e. `GET /PUT/resource/item`, not `PUT /resource/item`)
 - instead of `HTTP` headers, we also use `JSON`
+- we use `couchDB` as database backend
+- mv `config.sample.json` to `config.json` and make your settings for `couchDB`
 
 ## TL;DR
 
