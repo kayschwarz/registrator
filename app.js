@@ -398,7 +398,7 @@ if (app.logfile && typeof app.logfile !== "boolean") {
 
                 if (err.status === 409) {
                   // we are just warning if a number already is in db
-                  app.log.debug("Failed to reserve exisiting knoten #" + nr + "!");
+                  // app.log.debug("Failed to reserve exisiting knoten #" + nr + "!");
                   return callback(null);  
                 }
                 
@@ -449,7 +449,13 @@ if (app.logfile && typeof app.logfile !== "boolean") {
       else if (err && err.status === 404) {
       
         app.resources.Network.create({
-          id: network.name
+          id: network.name,
+          public: network.public,
+          url: network.url,
+          minimum: network.minimum,
+          maximum: network.maximum,
+          lease_days: network.lease_days,
+          lease_seconds: network.lease_seconds
         }, function(err, cNetwork){
   
           if (err) {
