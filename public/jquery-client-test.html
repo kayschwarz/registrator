@@ -72,7 +72,7 @@
       // what happens if we click 'check':
       $('#check').on('click', function () {
         // get the number from the field
-        var num = parseInt($('#checknumber').val(), 0);
+        var num = parseInt($('#checknumber').val(), 10);
         // client: do a check
         FFReg.check(num, showInConsole);
       });
