@@ -318,8 +318,6 @@ io.sockets.on('connection', function(socket) {
 
   app.resources.Knoten.on('save', function(doc) {
     
-    require('eyes').inspect(doc);
-    
     socket.emit('console', {
       "event": "REGISTER",
       "message": null,
