@@ -397,17 +397,14 @@ if (app.logfile && typeof app.logfile !== "boolean") {
                 // an error while creating means server error or conflict…
 
                 if (err.status === 409) {
-                  // we are ignoring the error if a number already is in db
-                  // TODO: check before creating…
-                  callback(null)
-                  
-                } else {
-                                    
-                  // everything else is a real error!
-                  app.log.debug("Error reserving knoten #" + nr + "!", err);
-                  callback(err);
-                  
+                  // we are just warning if a number already is in db
+                  app.log.debug("Failed to reserve exisiting knoten #" + nr + "!");
+                  return callback(null);  
                 }
+                
+                // everything else is a real error!
+                app.log.error("Error reserving knoten #" + nr + "!", err);
+                callback(err);
                 
               } else {
                 
