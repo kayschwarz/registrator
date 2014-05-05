@@ -362,8 +362,7 @@ if (app.logfile && typeof app.logfile !== "boolean") {
       databasedNetworks = [];
       
   var reserveKnoten = function (network, callback) {
-    console.log('reserving knoten: ', network.id);
-    // console.log('reserving knoten: ', network);
+    app.log.info('reserving knoten: ', network.id);
     
     var list = (_.where(networks, {"name": network.id}))[0].reserved;
     
@@ -398,7 +397,7 @@ if (app.logfile && typeof app.logfile !== "boolean") {
 
                 if (err.status === 409) {
                   // we are just warning if a number already is in db
-                  // app.log.debug("Failed to reserve exisiting knoten #" + nr + "!");
+                  // app.log.silly("Failed to reserve exisiting knoten #" + nr + "!");
                   return callback(null);  
                 }
                 
@@ -507,7 +506,6 @@ if (app.logfile && typeof app.logfile !== "boolean") {
         networksInDB.forEach(function(n) {
       
           // add it to the tmp list.
-          console.log(n.id)
           databasedNetworks.push(n.id);
           
         });
@@ -519,7 +517,7 @@ if (app.logfile && typeof app.logfile !== "boolean") {
     
       // exit if they are not the same!
       if ( configuredNetworks.sort().toString() !== databasedNetworks.sort().toString() ) {
-        app.log.error("Self-check: Networks are broken! :(");
+        app.log.error("Self-check: Networks are broken! :( \n Maybe check the database?");
       } else {
         app.log.info("self-check:", {'networks_ok': true})
       }
