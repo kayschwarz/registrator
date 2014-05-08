@@ -50,7 +50,8 @@
 # PATH should only include /usr/* if it runs after the mountnfs.sh script
 PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/bin # modify if you need
 
-DAEMON_ARGS="/usr/local/share/registrator/app.js"               # path to your node.js server/app
+                                                    # v-- logfile dest goes here
+DAEMON_ARGS="/usr/local/share/registrator/app.js -o /dev/null"               # path to your node.js server/app
                                             # NB: don't use ~/ in path
 
 DESC="node.js weimarnetz registrator"                  # whatever fancy description you like

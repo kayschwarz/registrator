@@ -6,6 +6,7 @@
   },
   
   "port": 8080,
+  "couch_?": "delete or set to null to use NON-PERSISTENT(!) in-memory storage engine",
   "couch": {
     "https": false,
     "uri": "couchdb://couch.example.com",
