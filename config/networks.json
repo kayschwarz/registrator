@@ -6,8 +6,8 @@
       "url": "http://github.com/eins78/registrator",
       "minimum": 2,
       "maximum": 1000,
-      "lease_days": 30,
-      "reserved": [ 178
+      "lease_seconds": 1,
+      "reserved": [ 2, 3, 178
       ]
     },
     {

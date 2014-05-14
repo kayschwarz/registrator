@@ -318,8 +318,6 @@ io.sockets.on('connection', function(socket) {
 
   app.resources.Knoten.on('save', function(doc) {
     
-    require('eyes').inspect(doc);
-    
     socket.emit('console', {
       "event": "REGISTER",
       "message": null,
@@ -364,8 +362,7 @@ if (app.logfile && typeof app.logfile !== "boolean") {
       databasedNetworks = [];
       
   var reserveKnoten = function (network, callback) {
-    console.log('reserving knoten: ', network.id);
-    // console.log('reserving knoten: ', network);
+    app.log.info('reserving knoten: ', network.id);
     
     var list = (_.where(networks, {"name": network.id}))[0].reserved;
     
@@ -399,17 +396,14 @@ if (app.logfile && typeof app.logfile !== "boolean") {
                 // an error while creating means server error or conflict…
 
                 if (err.status === 409) {
-                  // we are ignoring the error if a number already is in db
-                  // TODO: check before creating…
-                  callback(null)
-                  
-                } else {
-                                    
-                  // everything else is a real error!
-                  app.log.debug("Error reserving knoten #" + nr + "!", err);
-                  callback(err);
-                  
+                  // we are just warning if a number already is in db
+                  // app.log.silly("Failed to reserve exisiting knoten #" + nr + "!");
+                  return callback(null);  
                 }
+                
+                // everything else is a real error!
+                app.log.error("Error reserving knoten #" + nr + "!", err);
+                callback(err);
                 
               } else {
                 
@@ -454,7 +448,13 @@ if (app.logfile && typeof app.logfile !== "boolean") {
       else if (err && err.status === 404) {
       
         app.resources.Network.create({
-          id: network.name
+          id: network.name,
+          public: network.public,
+          url: network.url,
+          minimum: network.minimum,
+          maximum: network.maximum,
+          lease_days: network.lease_days,
+          lease_seconds: network.lease_seconds
         }, function(err, cNetwork){
   
           if (err) {
@@ -506,7 +506,6 @@ if (app.logfile && typeof app.logfile !== "boolean") {
         networksInDB.forEach(function(n) {
       
           // add it to the tmp list.
-          console.log(n.id)
           databasedNetworks.push(n.id);
           
         });
@@ -518,7 +517,7 @@ if (app.logfile && typeof app.logfile !== "boolean") {
     
       // exit if they are not the same!
       if ( configuredNetworks.sort().toString() !== databasedNetworks.sort().toString() ) {
-        app.log.error("Self-check: Networks are broken! :(");
+        app.log.error("Self-check: Networks are broken! :( \n Maybe check the database?");
       } else {
         app.log.info("self-check:", {'networks_ok': true})
       }
