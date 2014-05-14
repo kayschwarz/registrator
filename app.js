@@ -6,6 +6,7 @@ var flatiron  = require('flatiron'),
     util      = require('util'),
     _         = require('underscore'),
     mu        = require('mu2');
+    moment    = require('moment');
 
 // app: config
 app.config.argv();
@@ -56,6 +57,10 @@ app.router.get('/', function () {
       data.knoten = res.result.knoten;      
       data.knoten.sort(function(a,b){
         return b.last_seen - a.last_seen;
+      });
+      data.knoten.forEach(function(parameter){
+      	parameter.last_seen = moment(parameter.last_seen).format('L LT');
+      	parameter.created_at = moment(parameter.created_at).format('L LT');
       });
     } 
        
