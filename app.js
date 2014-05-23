@@ -5,7 +5,7 @@ var flatiron  = require('flatiron'),
     app       = flatiron.app,
     util      = require('util'),
     _         = require('underscore'),
-    mu        = require('mu2');
+    mu        = require('mu2'),
     moment    = require('moment');
 
 // app: config
@@ -58,10 +58,12 @@ app.router.get('/', function () {
       data.knoten.sort(function(a,b){
         return b.last_seen - a.last_seen;
       });
-      data.knoten.forEach(function(parameter){
-      	parameter.last_seen = moment(parameter.last_seen).format('L LT');
-      	parameter.created_at = moment(parameter.created_at).format('L LT');
-      });
+      if (data.knoten && Array.isArray(data.knoten)) {
+        data.knoten.forEach(function(parameter){
+          parameter.last_seen = moment(parameter.last_seen).format('L LT');
+          parameter.created_at = moment(parameter.created_at).format('L LT');
+        });
+      }
     } 
        
     app.renderWebsite(http, data);
